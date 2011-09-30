@@ -41,16 +41,21 @@ public:
 		double idistance = -1.0, crossresult, dist;
 		Point finalintersection, intersection;
 
-		Point neighbours[2];
+		Point runners[2];
 		Point nexpoints[2];
 		
 		SourcePoint bsourcepoints[2];
 		Point sourcepoints[2];
+		double perimeters[2];
+		double runneddistance[2];
+		std::vector<Point> tracks;
+		std::vector<Point> visitedstations;
 
 		bsourcepoints[0] = bfrom;
 		bsourcepoints[1] = bto;
 		sourcepoints[0] = from;
 		sourcepoints[1] = to;
+		//track[0] =  std::vector<Point>
 
 		int previ = 0,i = 0, loopcounter = 0;
 		Point prevcirclepoint ;
@@ -88,7 +93,7 @@ public:
 				loopcounter++;
 			}
 
-			addtoManual(finalintersection,finalintersection -n*10,Ogre::ColourValue(0,1,1));
+			addtoManual(finalintersection,finalintersection -n*1,Ogre::ColourValue(0,1,1));
 		}
 		
 		manual->end();
