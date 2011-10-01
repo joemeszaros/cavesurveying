@@ -31,6 +31,10 @@ public :
 		return Point(x*per,y*per,z*per);
 	}
 
+	bool operator==(Point &p) {
+		return (x == p.x && y == p.y && z == p.z);
+	}
+
 	double length() {
 		return sqrtl(x*x+y*y+z*z);
 	}

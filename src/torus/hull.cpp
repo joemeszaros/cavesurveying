@@ -26,7 +26,7 @@ public:
 
 		n = (to-from).normalize();
 		
-		addtoManual(from, from + n, Ogre::ColourValue(0.6,0.6,1));
+		//addtoManual(from, from + n, Ogre::ColourValue(0.6,0.6,1));
 		//addtoManual(Point(0,0,0),Point(-10,3,3),Ogre::ColourValue(1,1,0));
 
 		double minvalue = 1.0;
@@ -36,10 +36,10 @@ public:
 
 		reference = n.cross(randomvector);
 		reference = reference.normalize();
-		addtoManual(from+n, from+n + reference ,Ogre::ColourValue(0,1,1));
+		//addtoManual(from+n, from+n + reference ,Ogre::ColourValue(0,1,1));
 
 		double idistance = -1.0, crossresult, dist;
-		Point finalintersection, intersection;
+		Point finalintersections[2], intersection;
 
 		Point runners[2];
 		Point nexpoints[2];
@@ -48,42 +48,59 @@ public:
 		Point sourcepoints[2];
 		double perimeters[2];
 		double runneddistance[2];
-		std::vector<Point> tracks;
-		std::vector<Point> visitedstations;
+		double finalloopcounters[2];
+		double subtract = 0,t = 0;
+		bool predicate = false;
+		std::vector<Point> tracks[2];
+		std::vector<Point> visitedstations[2];
+		
+		//tracks = new std::vector<Point>[2];
+		//tracks[0] = new std::vector<Point>();
+		//tracks[1] = new std::vector<Point>();
 
 		bsourcepoints[0] = bfrom;
 		bsourcepoints[1] = bto;
 		sourcepoints[0] = from;
 		sourcepoints[1] = to;
-		//track[0] =  std::vector<Point>
+		perimeters[0] = 0;
+		perimeters[1] = 0;
+		runneddistance[0] = 0;
+		runneddistance[1] = 0;
+		
 
 		int previ = 0,i = 0, loopcounter = 0;
-		Point prevcirclepoint ;
+		Point prevcirclepoint,circlepoint ;
 		
 		Point crossproduct = n.cross(reference).normalize();
 		for(int j=0; j<2;j++) {
 			loopcounter = 0;
 			idistance = -1.0;
 			for(std::vector<BasePoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
-				Point circlepoint = Point(it->x, it->y, it->z);
+				circlepoint = Point(it->x, it->y, it->z);
 
 				i = getScalarSignum(reference, circlepoint-sourcepoints[j]);
 			
 				if (loopcounter != 0 && i != previ) {
+
 					debug("intersection");
 					if (i * previ == 0 && (i+previ) == 0) { //2 on the plane
-						intersection = ((prevcirclepoint-sourcepoints[j]).length() > (circlepoint-sourcepoints[j]).length()) ? prevcirclepoint : circlepoint;
+						predicate = (prevcirclepoint-sourcepoints[j]).length() > (circlepoint-sourcepoints[j]).length();
+						intersection =  predicate ? prevcirclepoint : circlepoint;
+						subtract = (predicate ? 1.0 : 0);
 					} else if (i * previ == 0 && (i+previ) != 0) { // 1 on the plane
 						intersection = (i == 0 ? circlepoint : prevcirclepoint);
+						subtract = (i == 0 ? 0 : 1 );
 					} else if (i * previ == -1) { // 0 on the plane
 						intersection = getIntersection(prevcirclepoint, circlepoint, sourcepoints[j], reference);
+						subtract = 0.5;
 					}
 
 					if (getScalarSignum(crossproduct, intersection - sourcepoints[j]) >= 0) {
 							dist = (intersection - sourcepoints[j]).length();
 							if (dist > idistance){
-								finalintersection = intersection;
+								finalintersections[j] = intersection;
 								idistance = dist;
+								finalloopcounters[j] = loopcounter-subtract;
 							}
 						}
 				}
@@ -91,11 +108,117 @@ public:
 				previ = i;
 				prevcirclepoint = circlepoint;
 				loopcounter++;
+				subtract = 0;
+			}
+			
+			tracks[j].push_back(finalintersections[j]);
+			//addtoManual(finalintersections[j],finalintersections[j] -n*1,Ogre::ColourValue(0,1,1));
+		}
+		Point first;
+		for(int j=0; j<2;j++) {
+			loopcounter = 0;
+			
+			for(std::vector<BasePoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
+				circlepoint = Point(it->x, it->y, it->z);
+
+				if (loopcounter != 0) {
+					perimeters[j] += (circlepoint-prevcirclepoint).length();
+				} else {
+					first = circlepoint;
+				}
+
+				if (loopcounter < finalloopcounters[j]) {
+					visitedstations[j].push_back(circlepoint);
+				} else if (loopcounter > finalloopcounters[j]) {
+					tracks[j].push_back(circlepoint);
+				}
+
+				prevcirclepoint = circlepoint;
+				loopcounter++;
 			}
 
-			addtoManual(finalintersection,finalintersection -n*1,Ogre::ColourValue(0,1,1));
+			perimeters[j] += (first-circlepoint).length();
+
+			for(std::vector<Point>::iterator it = visitedstations[j].begin(); it != visitedstations[j].end();++it) {
+				tracks[j].push_back(*it);
+			}
+
+			tracks[j].push_back(finalintersections[j]);
+
+		}
+
+		std::vector<Point>::iterator it[2];
+		for(int j=0; j<2;j++) {
+			it[j] = tracks[j].begin();
+			
+			runners[j] = *it[j];
+			++(it[j]);
+			nexpoints[j] = *it[j];
+		}
+
+		//addtoManual(runners[0],runners[1],Ogre::ColourValue(0,0,1));
+
+		double ratio[2];
+		int faster = 0;
+		int slower = 0;
+		int cnt = 0;
+		double l = 0;
+		while (runneddistance[0] + runneddistance[1] != perimeters[0] + perimeters[1]) { // && it[0] !=tracks[0].end() && it[1] !=tracks[1].end()) {
+			
+			for(int j=0; j<2;j++) {
+				l = (nexpoints[j]-runners[j]).length();
+ 				ratio[j] = (runneddistance[j] + l) / perimeters[j];
+			}
+
+			if (ratio[1] > ratio[0]) {
+				faster = 1; slower = 0;
+			} else if (ratio[1] < ratio[0]) {
+				faster = 0; slower = 1;
+			} else {
+				faster = -1; slower = -1;
+			}
+
+			if (faster * slower == 0) { //not in the same point
+				double inner = ratio[slower] * perimeters[faster];
+				double before = inner - runneddistance[faster];
+				l = (nexpoints[faster]-runners[faster]).length();
+				double m = before / l;
+				runneddistance[slower] += (nexpoints[slower] - runners[slower]).length();
+				runners[slower] = nexpoints[slower];
+				if (it[slower] != tracks[slower].end()) {
+					++(it[slower]);
+					nexpoints[slower] = *it[slower];
+				}
+				double added = ((nexpoints[faster]-runners[faster]) * m).length();
+
+				runners[faster] = runners[faster] + (nexpoints[faster]-runners[faster]) * m;
+				
+				runneddistance[faster] += added;
+				
+			} else if (faster * slower < 0) {
+				for(int j=0; j<2;j++) {
+					runners[j] = nexpoints[j];
+					++(it[j]);
+					nexpoints[j] = *it[j];
+				}
+				
+				
+				
+				
+			}
+			
+			addtoManual(runners[0],runners[1],Ogre::ColourValue(0.7,0.7,0,0.5));
+			
+			if (finalintersections[0] == nexpoints[0] && finalintersections[1] == nexpoints[1]) {
+				runneddistance[0] += (nexpoints[0] - runners[0]).length();
+				runneddistance[1] += (nexpoints[1] - runners[1]).length();
+				addtoManual(nexpoints[0],nexpoints[1],Ogre::ColourValue(0,0,1,0.5));
+			}
+
 		}
 		
+
+
 		manual->end();
 		return manual;
 	}
@@ -104,7 +227,7 @@ private:
 
 		manual = mSceneMgr->createManualObject("proba");
 		manual->setDynamic(true);
-		manual->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
+		manual->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
 	void addtoManual(Point p1, Point p2,Ogre::ColourValue color) {

@@ -82,7 +82,7 @@ bool OgreScretch::go(void)
 	mCamera->setPosition(Ogre::Vector3(0,0,80));
 	// Look back along -Z
 	mCamera->lookAt(Ogre::Vector3(0,0,-300));
-	mCamera->setNearClipDistance(5);
+	mCamera->setNearClipDistance(1);
 	// Create one viewport, entire window
 	Ogre::Viewport* vp = mWindow->addViewport(mCamera);
 	vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
@@ -134,7 +134,7 @@ void OgreScretch::createScene() {
 	p.load("d:\\tmp\\cave.xml");
 
 	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-
+	parentnode->setPosition(0,0,-30);
 	ManualObject* manual = MeshUtil::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	passagenode = parentnode->createChildSceneNode();
 	passagenode->attachObject(manual);
@@ -259,12 +259,12 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		break;
 	case OIS::KC_UP:
 	case OIS::KC_W:
-		mDirection.z = -mMove;
+		parentnode->scale(1.2,1.2,1.2);
 		break;
 
 	case OIS::KC_DOWN:
 	case OIS::KC_S:
-		mDirection.z = mMove;
+		parentnode->scale(0.8,0.8,0.8);
 		break;
 
 	case OIS::KC_LEFT:
