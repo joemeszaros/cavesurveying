@@ -7,7 +7,7 @@
 
 
 #include <stdlib.h>
-
+#include "point.h"
 
 #ifndef PASSAGE_H
 #define PASSAGE_H
@@ -20,7 +20,7 @@ public :
 	double x;
 	double y;
 	double z;
-
+	Point toPoint() { return Point(x,y,z); };
 	BasePoint(double x, double y, double z) : x(x),y(y),z(z) {}
 };
 

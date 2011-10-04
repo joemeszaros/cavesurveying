@@ -1,4 +1,6 @@
 #include <math.h>
+#ifndef POINT_H
+#define POINT_H
 
 class Point {
 public :
@@ -43,18 +45,15 @@ public :
 		return x*p.x+y*p.y+z*p.z;
 	}
 
-	Point& cross(Point &p) {
+	Point cross(Point &p) {
 		return Point(y*p.z-z*p.y,z*p.x-x*p.z,x*p.y-y*p.x);
 	}
 
-	Point& normalize() {
+	Point normalize() {
 		double l = sqrtl(x*x+y*y+z*z);
 		return Point(x/l,y/l,z/l);
 	}
 
-
-
-	
 };
 
 
@@ -69,3 +68,5 @@ struct Index {
 		z = _z;
 	}
 };
+
+#endif
