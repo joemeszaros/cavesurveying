@@ -260,15 +260,15 @@ private:
 
 		manual = mSceneMgr->createManualObject("proba");
 		manual->setDynamic(true);
-		manual->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
+		manual->begin("Test2/ColourTest", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
 	void addtoManual(Point p1, Point p2,Ogre::ColourValue color) {
 
 		manual->position(p1.x,p1.y,p1.z);
-		manual->colour(color);
+		//manual->colour(color);
 		manual->position(p2.x,p2.y,p2.z);
-		manual->colour(color);
+		//manual->colour(color);
 	}
 
 	void debug(char * s) {

@@ -133,6 +133,18 @@ void OgreScretch::createScene() {
 	Passage p;
 	p.load("d:\\tmp\\cave.xml");
 
+
+		MaterialPtr material = MaterialManager::getSingleton().create(
+      "Test2/ColourTest", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	Ogre::Pass* pass =  material->getTechnique(0)->getPass(0);
+	pass->setAmbient( 1,0.3, 0.588235);
+	pass->setDiffuse(1, 1, 0.588235,1);
+	pass->setCullingMode(Ogre::CullingMode::CULL_ANTICLOCKWISE);
+	pass->setLightingEnabled(true);
+	pass->setManualCullingMode(Ogre::ManualCullingMode::MANUAL_CULL_BACK);
+	pass->setPointSize(4.5);
+	
+
 	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	parentnode->setPosition(0,0,-30);
 	ManualObject* manual = MeshUtil::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
@@ -142,7 +154,12 @@ void OgreScretch::createScene() {
 	Hull hull;
 	ManualObject* manualhelper = hull.createHull(p, mSceneMgr);
 	helpernode = parentnode->createChildSceneNode();
-	helpernode->attachObject(manualhelper);
+	MeshPtr generatedmesh =  manualhelper->convertToMesh("convertedmesh");
+	//helpernode->attachObject(manualhelper);
+	Entity* ent =  mSceneMgr->createEntity("cmesh","convertedmesh");
+	
+
+	helpernode->attachObject(ent);
 
 	
 	parentnode->scale(10,10,10);
