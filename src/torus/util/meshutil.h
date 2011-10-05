@@ -25,6 +25,7 @@ public:
 	static Ogre::MeshPtr MeshUtil::createMesh();
 	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname,stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexlist, std::vector<Index2Str> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype = Ogre::RenderOperation::OT_TRIANGLE_LIST);
 	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
-	static Ogre::ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
+	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
+	static Ogre::Vector3 getPivotPoint(Passage& p);
 
 };

@@ -21,6 +21,12 @@ public :
 		return Point(x+p.x,y+p.y,z+p.z);
 	}
 
+	void operator+=(Point &p) {
+		x+=p.x;
+		y+=p.y;
+		z+=p.z;
+	}
+
 	Point operator-(Point &p) {
 		return Point(x-p.x,y-p.y,z-p.z);
 	}
@@ -28,6 +34,13 @@ public :
 	Point operator/(double per) {
 		return Point(x/per,y/per,z/per);
 	}
+
+	void operator/=(double per) {
+		x = x/per;
+		y = y/per;
+		z = z/per;
+	}
+	
 	
 	Point operator*(double per) {
 		return Point(x*per,y*per,z*per);

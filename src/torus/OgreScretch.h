@@ -14,6 +14,10 @@
 #include <OgreTextureManager.h>
 #include <OgreManualObject.h>
 
+
+#include <CEGUI.h>
+#include <RendererModules/Ogre/CEGUIOgreRenderer.h>
+
 using namespace Ogre;
 
 class OgreScretch : public Ogre::WindowEventListener, public Ogre::FrameListener
@@ -66,6 +70,13 @@ protected:
 	Ogre::SceneNode *helpernode;
 	Ogre::SceneNode *passagenode;
 	Ogre::SceneNode *headNode;
+	//Ogre::SceneNode *mCurrentObject;
+	//Ogre::RaySceneQuery* mRayScnQuery;
+
+	CEGUI::OgreRenderer* mRenderer;
+	 //CEGUI::OgreCEGUIRenderer* mGUIRenderer;
+     //CEGUI::System* mGUISystem;
+
 	bool mShutDown;
  
 };

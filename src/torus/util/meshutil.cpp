@@ -316,3 +316,16 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 	manual->end();
 	return manual;
 };
+
+Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
+
+	int cnt = 0;
+ 	Point pivot(0,0,0);
+
+	for (std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end();++it) {
+		pivot += it->toPoint();
+		cnt++;
+	}
+		pivot /= cnt;
+	return Ogre::Vector3(pivot.x, pivot.y, pivot.z);
+};

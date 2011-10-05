@@ -27,6 +27,7 @@ OgreScretch::~OgreScretch(void)
 	windowClosed(mWindow);
 	delete mRoot;
 	Ogre::String;
+	 
 }
 
 bool OgreScretch::go(void)
@@ -122,6 +123,18 @@ while(true)
 
 
 void OgreScretch::createScene() {
+	
+	mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+
+	CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
+	CEGUI::Font::setDefaultResourceGroup("Fonts");
+	CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+	CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+	CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
+
+	CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
+	CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+	CEGUI::MouseCursor::getSingleton().setImage( CEGUI::System::getSingleton().getDefaultMouseCursor());
 
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.25, 0.25, 0.25));
 
@@ -137,12 +150,12 @@ void OgreScretch::createScene() {
 		MaterialPtr material = MaterialManager::getSingleton().create(
       "Test2/ColourTest", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	Ogre::Pass* pass =  material->getTechnique(0)->getPass(0);
-	pass->setAmbient( 1,0.3, 0.588235);
-	pass->setDiffuse(1, 1, 0.588235,1);
+	pass->setAmbient( 1,0, 0);
+	pass->setDiffuse(1, 1, 0.588235,0.3);
 	pass->setCullingMode(Ogre::CullingMode::CULL_ANTICLOCKWISE);
 	pass->setLightingEnabled(true);
 	pass->setManualCullingMode(Ogre::ManualCullingMode::MANUAL_CULL_BACK);
-	pass->setPointSize(4.5);
+	pass->setPointSize(14.5);
 	
 
 	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -150,6 +163,7 @@ void OgreScretch::createScene() {
 	ManualObject* manual = MeshUtil::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	passagenode = parentnode->createChildSceneNode();
 	passagenode->attachObject(manual);
+	passagenode->translate(-MeshUtil::getPivotPoint(p));
 
 	Hull hull;
 	ManualObject* manualhelper = hull.createHull(p, mSceneMgr);
@@ -160,6 +174,7 @@ void OgreScretch::createScene() {
 	
 
 	helpernode->attachObject(ent);
+	helpernode->translate(-MeshUtil::getPivotPoint(p));
 
 	
 	parentnode->scale(10,10,10);
@@ -336,6 +351,8 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 
 bool OgreScretch::keyReleased( const OIS::KeyEvent &arg ){
 
+	CEGUI::System::getSingleton().injectKeyUp(arg.key);
+
 	switch (arg.key)
 	{
 	case OIS::KC_UP:
@@ -374,7 +391,33 @@ bool OgreScretch::keyReleased( const OIS::KeyEvent &arg ){
 	return true;
 }
 
+
+CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID)
+{
+    switch (buttonID)
+    {
+    case OIS::MB_Left:
+        return CEGUI::LeftButton;
+ 
+    case OIS::MB_Right:
+        return CEGUI::RightButton;
+ 
+    case OIS::MB_Middle:
+        return CEGUI::MiddleButton;
+ 
+    default:
+        return CEGUI::LeftButton;
+    }
+}
+
 bool OgreScretch::mouseMoved( const OIS::MouseEvent &arg) {
+
+	CEGUI::System &sys = CEGUI::System::getSingleton();
+	sys.injectMouseMove(arg.state.X.rel, arg.state.Y.rel);
+	// Scroll wheel.
+	if (arg.state.Z.rel)
+		sys.injectMouseWheelChange(arg.state.Z.rel / 120.0f);
+
 	if (arg.state.buttonDown(OIS::MB_Right))
 	{
 		parentnode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_WORLD);
@@ -382,6 +425,7 @@ bool OgreScretch::mouseMoved( const OIS::MouseEvent &arg) {
 	return true;
 }
 bool OgreScretch::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id ){
+	CEGUI::System::getSingleton().injectMouseButtonDown(convertButton(id));
 	Ogre::Light *light = mSceneMgr->getLight("Light1");
 	switch (id)
 	{
@@ -394,7 +438,12 @@ bool OgreScretch::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 	return true;
 }
 
-bool OgreScretch::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id ){return true;}
+bool OgreScretch::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id ){
+	CEGUI::System::getSingleton().injectMouseButtonUp(convertButton(id));
+	return true;
+
+}
+
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

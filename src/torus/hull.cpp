@@ -144,7 +144,7 @@ public:
 	}
 
 
-	void jointTracks(std::vector<Point> tracks[], Point finalintersections[], double perimeters[]) {
+	void jointTracks(std::vector<Point> tracks[], Point finalintersections[], Point sourcepoints[], double perimeters[]) {
 		
 		Point runners[2];
 		Point nexpoints[2];
@@ -164,7 +164,7 @@ public:
 			nexpoints[j] = *it[j];
 		}
 
-		addtoManual(runners[0],runners[1],Ogre::ColourValue(0,0,1));
+		addtoManual(runners[0],runners[1],(runners[0]-sourcepoints[0]).normalize(), (runners[1]-sourcepoints[1]).normalize(), Ogre::ColourValue(0,0,1));
 
 		double ratio[2];
 		int faster = 0;
@@ -216,12 +216,12 @@ public:
 				
 			}
 			
-			addtoManual(runners[0],runners[1],Ogre::ColourValue(0.7,0.7,0,0.5));
+			addtoManual(runners[0],runners[1],(runners[0]-sourcepoints[0]).normalize(), (runners[1]-sourcepoints[1]).normalize(), Ogre::ColourValue(0.7,0.7,0,0.5));
 			
 			if (finalintersections[0] == nexpoints[0] && finalintersections[1] == nexpoints[1]) {
 				runneddistance[0] += (nexpoints[0] - runners[0]).length();
 				runneddistance[1] += (nexpoints[1] - runners[1]).length();
-				addtoManual(nexpoints[0],nexpoints[1],Ogre::ColourValue(0,0,1,0.5));
+				addtoManual(nexpoints[0],nexpoints[1],(nexpoints[0]-sourcepoints[0]).normalize(), (nexpoints[1]-sourcepoints[1]).normalize(),Ogre::ColourValue(0,0,1,0.5));
 				break;
 			}
 
@@ -241,14 +241,17 @@ public:
 			double perimeters[2];
 			Point finalintersections[2];
 			std::vector<Point> tracks[2];
+			Point sourcepoints[2];
 			SourcePoint p1 = *it;
 			++it;
 			available --;
 			SourcePoint p2 = *it;
+			sourcepoints[0] = p1.toPoint();
+			sourcepoints[1] = p2.toPoint();
 			
 			getTracks(p1,p2, tracks, perimeters, finalintersections);
 			
-			jointTracks(tracks, finalintersections, perimeters);
+			jointTracks(tracks, finalintersections, sourcepoints, perimeters);
 			
 		}
 
@@ -260,15 +263,17 @@ private:
 
 		manual = mSceneMgr->createManualObject("proba");
 		manual->setDynamic(true);
-		manual->begin("Test2/ColourTest", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
+		manual->begin("Cave/Green", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
-	void addtoManual(Point p1, Point p2,Ogre::ColourValue color) {
+	void addtoManual(Point p1, Point p2, Vector n1, Vector n2,Ogre::ColourValue color) {
 
 		manual->position(p1.x,p1.y,p1.z);
-		//manual->colour(color);
+		manual->normal(n1.x, n1.y, n1.z);
+		manual->colour(color);
 		manual->position(p2.x,p2.y,p2.z);
-		//manual->colour(color);
+		manual->normal(n2.x,n2.y,n2.z);
+		manual->colour(color);
 	}
 
 	void debug(char * s) {
