@@ -70,12 +70,11 @@ protected:
 	Ogre::SceneNode *helpernode;
 	Ogre::SceneNode *passagenode;
 	Ogre::SceneNode *headNode;
-	//Ogre::SceneNode *mCurrentObject;
-	//Ogre::RaySceneQuery* mRayScnQuery;
-
+	Ogre::SceneNode *sphereNode;
+	Ogre::SceneNode *polygonNode;
+	double alpha;
+	double alphadiff;
 	CEGUI::OgreRenderer* mRenderer;
-	 //CEGUI::OgreCEGUIRenderer* mGUIRenderer;
-     //CEGUI::System* mGUISystem;
 
 	bool mShutDown;
  

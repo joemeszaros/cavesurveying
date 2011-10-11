@@ -2,7 +2,6 @@
 #include "util/util.h"
 #include "util/meshutil.h"
 #include "importers.h"
-#include "exporters.h"
 #include "graph.h"
 
 #include <OgreException.h>
@@ -17,7 +16,7 @@
 #include "hull.cpp"
 
 //-------------------------------------------------------------------------------------
-OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0)
+OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1)
 {
 }
 //-------------------------------------------------------------------------------------
@@ -143,23 +142,32 @@ void OgreScretch::createScene() {
 	Ogre::Entity* ogreHead = mSceneMgr->createEntity("ogrehead", "ogrehead.mesh");
     headNode->attachObject(ogreHead); */
 
+
+	
+
+	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+
+	
+		MaterialPtr material = MaterialManager::getSingleton().create(
+      "Test2/ColourTest", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	Ogre::Pass* pass =  material->getTechnique(0)->getPass(0);
+	pass->setAmbient( 0.5,0.5, 0.5);
+	pass->setDiffuse(139/255.0f, 71/255.0f, 38/255.0f,1);
+	pass->setCullingMode(Ogre::CullingMode::CULL_NONE);
+	pass->setLightingEnabled(true);
+	pass->setManualCullingMode(Ogre::ManualCullingMode::MANUAL_CULL_NONE);
+	pass->setPointSize(14.5);
+
+
+/*
 	Passage p;
 	p.load("d:\\tmp\\cave.xml");
 
 
-		MaterialPtr material = MaterialManager::getSingleton().create(
-      "Test2/ColourTest", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-	Ogre::Pass* pass =  material->getTechnique(0)->getPass(0);
-	pass->setAmbient( 1,0, 0);
-	pass->setDiffuse(1, 1, 0.588235,0.3);
-	pass->setCullingMode(Ogre::CullingMode::CULL_ANTICLOCKWISE);
-	pass->setLightingEnabled(true);
-	pass->setManualCullingMode(Ogre::ManualCullingMode::MANUAL_CULL_BACK);
-	pass->setPointSize(14.5);
 	
 
-	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	parentnode->setPosition(0,0,-30);
+	
+	
 	ManualObject* manual = MeshUtil::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	passagenode = parentnode->createChildSceneNode();
 	passagenode->attachObject(manual);
@@ -180,6 +188,40 @@ void OgreScretch::createScene() {
 	parentnode->scale(10,10,10);
 	//helpernode->scale(10,10,10);
 	
+	SceneNode* sphereNode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	 MeshUtil::createSphere("mySphereMesh2", 1.3, 20, 20);
+	 Entity* sphereEntity2 = mSceneMgr->createEntity("mySphereEntity2", "mySphereMesh2");
+	 sphereEntity2->setMaterialName("Test2/Cave");
+	 sphereNode2->attachObject(sphereEntity2);
+	 sphereNode2->setPosition(-MeshUtil::getPivotPoint(p));
+	 
+*/
+	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
+	std::vector<Index2Str> indicesstr;
+
+	//formats::Polygon::import("G:\\cavesurveying\\data\\\Pocsakoi.cave",vertexliststr,indicesstr);
+	formats::Therion::import("G:\\cavesurveying\\data\\\DistoX\\2.txt",vertexliststr,indicesstr);
+	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
+/*
+	ManualObject* manualPolygon = MeshUtil::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+	polygonNode = parentnode->createChildSceneNode();
+	polygonNode->attachObject(manualPolygon);
+	polygonNode->setPosition(-MeshUtil::getPivotPoint(vertexliststr));
+*/
+	Hull hull2;
+	ManualObject* manualhelper2 = hull2.createHull(p, mSceneMgr);
+	helpernode = parentnode->createChildSceneNode();
+	MeshPtr generatedmesh2 =  manualhelper2->convertToMesh("convertedmesh2");
+	Entity* ent2 =  mSceneMgr->createEntity("cmesh2","convertedmesh2");
+	
+
+	helpernode->attachObject(ent2);
+	helpernode->translate(-MeshUtil::getPivotPoint(p));
+
+	ManualObject* manual2 = MeshUtil::createManual(mSceneMgr,"polygonpassage","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+	passagenode = parentnode->createChildSceneNode();
+	passagenode->attachObject(manual2);
+	passagenode->translate(-MeshUtil::getPivotPoint(p));
 
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
 	light->setType(Ogre::Light::LT_POINT);
@@ -300,12 +342,11 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		break;
 
 	case OIS::KC_LEFT:
-	case OIS::KC_A:
+	
 		mDirection.x = -mMove;
 		break;
 
 	case OIS::KC_RIGHT:
-	case OIS::KC_D:
 		mDirection.x = mMove;
 		break;
 
@@ -321,6 +362,15 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 
 	case OIS::KC_ESCAPE: 
 		mShutDown = true;
+		break;
+
+	case OIS::KC_A :
+			if (alpha-alphadiff >= 0) {
+				alpha -= alphadiff;
+				MaterialPtr mod = MaterialManager::getSingleton().getByName("Test2/ColourTest");
+				mod->setDiffuse(139/255.0f, 71/255.0f, 38/255.0f,alpha);
+			}
+			
 		break;
 	case OIS::KC_R :
 		

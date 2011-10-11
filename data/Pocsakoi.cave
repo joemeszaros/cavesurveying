@@ -1,0 +1,77 @@
+POLYGON Cave Surveying Software
+Polygon Program Version   = 1.0
+Polygon Data File Version = 1.0
+1998-1999 ===> Prepostffy Zsolt
+-------------------------------
+
+*** Project ***
+Project name: Pócsakõi-víznyelõbarlang
+Project code: 
+Made by: Prépostffy Zsolt
+Made date: 36150
+Last modi: 36182
+
+*** Surveys ***
+Survey name: Pócsakõi
+Survey team: BEAC
+Rose György	Rajzolás
+Aknai Zoltán	Mûszer olvasása
+Lettner Gábor	Hosszmérés
+	
+	
+Survey date: 33744
+Declination: 0
+Instruments: 
+Mérõszallag	0
+Bányászkompasz	0
+Fokív	0
+Fix point: 0
+0	0	0	1	1	1	1
+Survey data
+From	To	Length	Azimuth	Vertical	Label	Left	Right	Up	Down	Note
+0	1	2,1	67	-90		1	1	1	1	30 cm a bal vason   
+1	2	2,15	67	-29		1	1	1	1	
+2	3	2,05	67	-90		1	1	1	1	Ki ll¢ k” alj n     
+3	4	1,7	157	24		1	1	1	1	
+4	5	2,41	157	-90		1	1	1	1	
+5	6	1,1	213	0		1	1	1	1	
+6	7	1,86	213	-90		1	1	1	1	
+7	8	0,5	28	0,2		1	1	1	1	
+8	10	1,32	8	-90		1	1	1	1	
+10	11	1,94	27,5	0		1	1	1	1	
+11	12	0,3	232	-24		1	1	1	1	
+12	13	0,83	30	-10		1	1	1	1	
+13	14	1,72	30	-90		1	1	1	1	
+14	15	1,06	115	0,2		1	1	1	1	
+15	16	2,65	115	-90		1	1	1	1	
+16	17	3,64	160	-8		1	1	1	1	
+17	18	3,72	160	-90		1	1	1	1	
+18	19	0,88	44	-10		1	1	1	1	
+19	20	2,55	44	-90		1	1	1	1	
+20	21	4,56	171	-19,5		1	1	1	1	
+21	22	2,85	170	-90		1	1	1	1	
+22	23	0,85	285	-0,8		1	1	1	1	
+23	24	0,58	125	-10		1	1	1	1	
+24	25	1,19	125	-90		1	1	1	1	
+25	26	2,13	110,5	-20		1	1	1	1	
+26	27	2,91	181	-29		1	1	1	1	
+27	28	1,4	94	-11		1	1	1	1	
+28	29	1,43	74	3		1	1	1	1	
+29	30	3,35	74	-90		1	1	1	1	
+30	31	0,3	99	-9		1	1	1	1	
+31	32	0,63	99	-90		1	1	1	1	
+32	33	2,37	131	-10		1	1	1	1	
+33	34	1,93	131	-90		1	1	1	1	
+34	35	2,09	110	-0,3		1	1	1	1	
+35	36	2,03	138	-17		3	4	2	1	
+36	37	7,75	138	-90		3	4	5	2	
+37	38	5	115	10		5	6	3	1	
+38	39	5,65	88	-9		4	3	2	2	
+39	40	3,65	105	0,4		3	3	2	1	
+
+End of survey data.
+
+*** Surface ***
+End of surface data.
+
+EOF.

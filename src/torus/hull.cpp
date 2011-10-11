@@ -263,7 +263,7 @@ private:
 
 		manual = mSceneMgr->createManualObject("proba");
 		manual->setDynamic(true);
-		manual->begin("Cave/Green", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
+		manual->begin("Test2/ColourTest", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
 	void addtoManual(Point p1, Point p2, Vector n1, Vector n2,Ogre::ColourValue color) {

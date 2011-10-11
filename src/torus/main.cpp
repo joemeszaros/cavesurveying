@@ -14,11 +14,11 @@ void test() {
 	
 	//importers::PolygonImporter::import("c:\\Program Files\\POLYGON2.7\\CaveData\\Samples\\Vecsem.cave",vertexlist,indices);
 
-	importers::PlotImporter::import("d:\\tmp\\önlab\\besz\\Eglwys.plt",vertexlist,indices,offsets);
+	formats::Plot::import("d:\\tmp\\önlab\\besz\\Eglwys.plt",vertexlist,indices,offsets);
 
 	//importers::SurvexImporter::import("d:\\tmp\\önlab\\files\\exorted\\Eglwys.3d",vertexlist,indices);
 
-	exporters::Passage::export("d:\\tmp\\önlab\\besz\\eglwys.passage",vertexlist,indices,offsets);
+	formats::Passage4::export("d:\\tmp\\önlab\\besz\\eglwys.passage",vertexlist,indices,offsets);
 
 }
 

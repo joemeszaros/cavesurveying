@@ -1,7 +1,13 @@
 #include "importers.h"
+#include "graph.h"
 #include "inc/img.h"
 
-void importers::SurvexImporter::import(std::string filename, vector<Ogre::Vector3> &vertexlist, std::vector<Index2> &indices) {
+#define M_PI 3.14159265358979323846
+
+using namespace std;
+
+
+void formats::Survex::import(std::string filename, vector<Ogre::Vector3> &vertexlist, std::vector<Index2> &indices) {
 
  img_point imgpt;
   int result;
@@ -105,9 +111,9 @@ img* pimg = img_open(filename.c_str());
 
 }
 
-#define M_PI 3.14159265358979323846
 
-void importers::PlotImporter::import(std::string filename, vector<Ogre::Vector3> &vertexlist, std::vector<Index2> &indices,std::vector<CaveOffset> &offsets) {
+
+void formats::Plot::import(std::string filename, vector<Ogre::Vector3> &vertexlist, std::vector<Index2> &indices,std::vector<CaveOffset> &offsets) {
 	ifstream in(filename.c_str());
 	stringstream ss;
 
@@ -158,7 +164,7 @@ void importers::PlotImporter::import(std::string filename, vector<Ogre::Vector3>
 }
 
 
-void importers::PolygonImporter::import(std::string filename, stdext::hash_map<const std::string,Ogre::Vector3> &vertexlist, std::vector<Index2Str> &indices) {
+void formats::Polygon::import(std::string filename, stdext::hash_map<const std::string,Ogre::Vector3> &vertexlist, std::vector<Index2Str> &indices) {
 	bool dataOK = false;
 	stdext::hash_map<const std::string,BPoint> points;
 	points["0"] = BPoint(Ogre::Vector3(0,0,0),true);
@@ -229,4 +235,164 @@ void importers::PolygonImporter::import(std::string filename, stdext::hash_map<c
 	}
 
 
+}
+
+void formats::Therion::import(std::string filename, stdext::hash_map<const std::string,Ogre::Vector3> &vertexlist, std::vector<Index2Str> &indices) {
+	bool dataOK = false;
+	stdext::hash_map<const std::string,BPoint> points;
+	points["0"] = BPoint(Ogre::Vector3(0,0,0),true);
+
+	CaveCoord cv;
+	Ogre::Vector3 t;
+	int cnt = 1;
+	double xd, yd, zd;
+	string line, segments;
+	vector<string> items;
+	ifstream in(filename.c_str());
+	stringstream ss;
+	string startpoint;
+	string endpoint;
+	double hossz;
+	double irany;
+	double lejtes;
+	int pos = -1;	
+
+	while(getline(in,line)) {
+
+		if (line.find("End of survey data.") != -1) dataOK = false;
+
+		if (dataOK)
+		{
+			ss << line; 
+
+			while (getline(ss,segments,'\t')) {
+				items.push_back(segments);
+			}
+
+
+			if (items.size() < 5) continue;
+			startpoint = items[0];
+			endpoint = items[1];
+			
+			if (endpoint.empty()) {
+				stringstream itoass;
+				itoass << cnt++;
+				endpoint.append("x" + startpoint + itoass.str());
+			}
+
+			indices.push_back(Index2Str(startpoint,endpoint));
+
+			for (int i = 2; i <=4; i++) {
+				pos = items[i].find(",");
+				if (pos != -1)
+				{ items[i].replace(pos,1,"."); }
+			}
+
+			
+
+			hossz = atof(items[4].c_str());
+			irany = atof(items[2].c_str());
+			lejtes = atof(items[3].c_str());
+			cv = CaveCoord(hossz, irany *  M_PI / 180, lejtes * M_PI / 180);
+			xd = cv.Length *  cos(cv.Vertical) * cos(cv.Azimuth);
+			yd = cv.Length * cos(cv.Vertical) * sin(cv.Azimuth);
+			zd = cv.Length * sin(cv.Vertical);
+			t = points[startpoint].p;
+			BPoint ep = points[endpoint];
+			if (ep.contains == false)
+			{
+				points[endpoint] = BPoint(Ogre::Vector3(  t.x + xd,t.y + yd,t.z + zd),true);
+			}
+			items.clear();
+			ss.clear();
+		}
+
+		
+		if (line.find("DATA") != -1) {
+			dataOK = true;
+		}
+	}
+
+	for(stdext::hash_map<const std::string,BPoint>::iterator it =  points.begin();it != points.end();++it) {
+		vertexlist[(*it).first] = it->second.p;
+	}
+
+
+}
+
+
+Passage formats::Therion::toPassage(stdext::hash_map<const std::string, Ogre::Vector3> &vertexlist,std::vector<Index2Str> &indices) {
+	std::map<const std::string, SourcePoint> map;
+	Passage p;
+
+	for (std::vector<Index2Str>::iterator it = indices.begin(); it != indices.end();++it) {
+		string from = it->i1;
+		string to = it->i2;
+
+		if (!to.compare(0, 1, "x")) { // to starts with "x"
+			Ogre::Vector3 act = vertexlist[to];
+			map[from].points.push_back(BasePoint(act.x,act.y,act.z));
+		} else {
+
+			if (map.find(from) == map.end()) { // not in the hashmap
+				Ogre::Vector3 act;
+				act = vertexlist[from];
+				SourcePoint sp = SourcePoint(act.x, act.y, act.z);
+				map[from] = sp;
+			}
+
+			if (map.find(to) == map.end()) {
+				Ogre::Vector3 act;
+				act = vertexlist[to];
+				SourcePoint sp = SourcePoint(act.x, act.y, act.z);
+				map[to] = sp;
+			}
+		}
+	}
+	
+	for (std::map<const std::string, SourcePoint>::iterator it = map.begin();it!=map.end();it++) {
+		p.points.push_back(it->second);
+	}
+
+	return p;
+
+}
+
+void formats::LineList::export(string filename,vector<Ogre::Vector3> vertexlist,vector<Index2> indices) {
+
+	ofstream myfile (filename.c_str());
+	if (myfile.is_open())
+	{
+		myfile<<vertexlist.size()<<endl;
+		myfile<<indices.size()<<endl;
+
+		for (vector<Ogre::Vector3>::iterator it = vertexlist.begin();it!=vertexlist.end();++it) {
+			myfile<<it->x<<"\t"<<it->y<<"\t"<<it->z<<endl;
+		}
+
+		for (vector<Index2>::iterator it = indices.begin();it != indices.end(); ++it) {
+			myfile<<it->i1<<"\t"<<it->i2<<endl;	
+		}
+	    myfile.close();
+	} 
+	else cout << "Unable to open file";
+  
+}
+
+void formats::Passage4::export(string filename,vector<Ogre::Vector3> vertexlist,vector<Index2> indices,std::vector<CaveOffset> offsets) {
+	ofstream myfile (filename.c_str());
+	if (myfile.is_open())
+	{
+		myfile<<vertexlist.size()<<endl;
+		
+		for (vector<Ogre::Vector3>::iterator it = vertexlist.begin();it != vertexlist.end(); ++it) {
+			myfile<<it->x<<"\t"<<it->y<<"\t"<<it->z<<endl;	
+		}
+		Graph g;
+		g.create(indices,vertexlist.size());
+		g.print(myfile,'\t',0,offsets);
+	    myfile.close();
+	} 
+	else cout << "Unable to open file";
+  
 }

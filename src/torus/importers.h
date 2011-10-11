@@ -8,28 +8,50 @@
 #include <math.h>
 #include "base.h"
 #include <OgreMath.h>
+#include "passage.h"
 
 
 using namespace std;
 
-namespace importers {
-	class PolygonImporter
+namespace formats {
+
+	class Polygon
 	{
 		public:
 			static void import(string filename,stdext::hash_map<const std::string, Ogre::Vector3> &vertexlist,std::vector<Index2Str> &indices);
 
 	};
 
-	class PlotImporter {
+	class Therion
+	{
+		public:
+			static void import(string filename,stdext::hash_map<const std::string, Ogre::Vector3> &vertexlist,std::vector<Index2Str> &indices);
+			static Passage toPassage(stdext::hash_map<const std::string, Ogre::Vector3> &vertexlist,std::vector<Index2Str> &indices);
+
+	};
+
+	class Plot {
 		public:
 			static void import(std::string filename, std::vector<Ogre::Vector3> &vertexlist, std::vector<Index2> &indices,std::vector<CaveOffset> &offsets);	
 	};
 
-	class SurvexImporter
+	class Survex
 	{
 		public:
 			static void import(std::string filename, std::vector<Ogre::Vector3> &vertexlist, std::vector<Index2> &indices);	
 
+	};
+
+	class LineList
+	{
+		public:
+			static void export(string filename,std::vector<Ogre::Vector3> vertexlist,std::vector<Index2> indices);
+	};
+
+	class Passage4
+	{
+		public:
+			static void export(string filename,std::vector<Ogre::Vector3> vertexlist,std::vector<Index2> indices, std::vector<CaveOffset> offsets);
 	};
 
 
