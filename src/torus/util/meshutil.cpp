@@ -355,6 +355,20 @@ Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre:
 	return Ogre::Vector3(pivot.x, pivot.y, pivot.z);
 }
 
+
+Point MeshUtil::getPivotPoint(std::vector<BasePoint> &basepoints) {
+	int cnt = 0;
+ 	Point pivot(0,0,0);
+	Point act;
+
+	for(std::vector<BasePoint>::iterator it = basepoints.begin();it != basepoints.end();++it) {
+		pivot += it->toPoint();
+		cnt++;
+	}
+	pivot /= cnt;
+	return Point(pivot.x, pivot.y, pivot.z);
+}
+
 void MeshUtil::createSphere(const std::string& strName, const float r, const int nRings, const int nSegments)
  {
      MeshPtr pSphere = MeshManager::getSingleton().createManual(strName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);

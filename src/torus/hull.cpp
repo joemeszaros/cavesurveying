@@ -1,6 +1,7 @@
 #include<windows.h>
 #include "point.h"
 #include "passage.h"
+#include "util/meshutil.h"
 #include "OgreManualObject.h"
 #include "OgreSceneManager.h"
 typedef Point Vector;
@@ -67,27 +68,29 @@ public:
 		for(int j=0; j<2;j++) {
 			loopcounter = 0;
 			idistance = -1.0;
+			Point pivotpoint = MeshUtil::getPivotPoint(bsourcepoints[j].points);
+
 			for(std::vector<BasePoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
 				circlepoint = it->toPoint();
 
-				i = getScalarSignum(reference, circlepoint-sourcepoints[j]);
+				i = getScalarSignum(reference, circlepoint-pivotpoint);
 			
 				if (loopcounter != 0 && i != previ) {
 					
 					if (i * previ == 0 && (i+previ) == 0) { //2 on the plane
-						predicate = (prevcirclepoint-sourcepoints[j]).length() > (circlepoint-sourcepoints[j]).length();
+						predicate = (prevcirclepoint-pivotpoint).length() > (circlepoint-pivotpoint).length();
 						intersection =  predicate ? prevcirclepoint : circlepoint;
 						subtract = (predicate ? 1.0 : 0);
 					} else if (i * previ == 0 && (i+previ) != 0) { // 1 on the plane
 						intersection = (i == 0 ? circlepoint : prevcirclepoint);
 						subtract = (i == 0 ? 0 : 1 );
 					} else if (i * previ == -1) { // 0 on the plane
-						intersection = getIntersection(prevcirclepoint, circlepoint, sourcepoints[j], reference);
+						intersection = getIntersection(prevcirclepoint, circlepoint, pivotpoint, reference);
 						subtract = 0.5;
 					}
 
-					if (getScalarSignum(crossproduct, intersection - sourcepoints[j]) >= 0) {
-							dist = (intersection - sourcepoints[j]).length();
+					if (getScalarSignum(crossproduct, intersection - pivotpoint) >= 0) {
+							dist = (intersection - pivotpoint).length();
 							if (dist > idistance){
 								finalintersections[j] = intersection;
 								idistance = dist;
@@ -142,6 +145,7 @@ public:
 
 
 	}
+
 
 
 	void jointTracks(std::vector<Point> tracks[], Point finalintersections[], Point sourcepoints[], double perimeters[]) {
