@@ -25,7 +25,7 @@ public:
 	static Ogre::MeshPtr MeshUtil::createMesh();
 	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname,stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexlist, std::vector<Index2Str> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype = Ogre::RenderOperation::OT_TRIANGLE_LIST);
 	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
-	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
+	static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype, bool shot, bool slices);
 	static Ogre::Vector3 getPivotPoint(Passage& p);
 	static void createSphere(const std::string& strName, const float r, const int nRings = 16, const int nSegments = 16);
 	static Ogre::Vector3 getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr);

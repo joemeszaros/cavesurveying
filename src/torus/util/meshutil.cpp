@@ -282,7 +282,7 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 };
 
 
-ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype) {
+ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype,bool shot, bool slices) {
 
 	ManualObject* manual = mSceneMgr->createManualObject(name);
 	manual->setDynamic(true);
@@ -291,26 +291,32 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 	SourcePoint prev = passage.points.front();
 
 	for(std::vector<SourcePoint>::iterator it = passage.points.begin(); it != passage.points.end(); ++it) {
-
-		manual->position(prev.x,prev.y,prev.z);
-		manual->colour(Ogre::ColourValue(1,1,1));
-		manual->position(it->x,it->y,it->z);
-		manual->colour(Ogre::ColourValue(1,1,1));
-
-		if (it->points.size() > 0) {
+	
+		if (shot) {
+			manual->position(prev.x,prev.y,prev.z);
+			manual->colour(Ogre::ColourValue(1,1,1));
+			manual->position(it->x,it->y,it->z);
+			manual->colour(Ogre::ColourValue(1,1,1));
+		}
+		if (it->points.size() > 0 && (slices || shot)) {
 			BasePoint prevoncircle = it->points.back();
 
 			for(std::vector<BasePoint>::iterator it2 = (*it).points.begin(); it2 != (*it).points.end(); ++it2) {
-				manual->position(it->x,it->y,it->z);
-				manual->colour(colour);
-				manual->position(it2->x,it2->y,it2->z);
-				manual->colour(colour);
+				//adding sourcepoint->basepoint lines
+				if (shot) {
+					manual->position(it->x,it->y,it->z);
+					manual->colour(colour);
+					manual->position(it2->x,it2->y,it2->z);
+					manual->colour(colour); 
+				}
 
-				manual->position(prevoncircle.x,prevoncircle.y,prevoncircle.z);
-				manual->colour(Ogre::ColourValue(0,1,0));
-				manual->position(it2->x,it2->y,it2->z);
-				manual->colour(Ogre::ColourValue(0,1,0));
-				prevoncircle =  *it2;
+				if (slices) {
+					manual->position(prevoncircle.x,prevoncircle.y,prevoncircle.z);
+					manual->colour(Ogre::ColourValue(0,1,0));
+					manual->position(it2->x,it2->y,it2->z);
+					manual->colour(Ogre::ColourValue(0,1,0));
+					prevoncircle =  *it2;
+				}
 			}
 		}
 		prev = *it;
@@ -325,10 +331,11 @@ Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
  	Point pivot(0,0,0);
 
 	for (std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end();++it) {
+		
 		pivot += it->toPoint();
 		cnt++;
 	}
-		pivot /= cnt;
+	pivot /= cnt;
 	return Ogre::Vector3(pivot.x, pivot.y, pivot.z);
 };
 
@@ -338,9 +345,11 @@ Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre:
 	Ogre::Vector3 act;
 
 	for(stdext::hash_map<const Ogre::String,Ogre::Vector3>::iterator it =  vertexliststr.begin();it != vertexliststr.end();++it) {
-		act = it->second;
-		pivot += Point(act.x, act.y, act.z);
-		cnt++;
+		if (it->first.compare(0, 1, "x")) { 
+			act = it->second;
+			pivot += Point(act.x, act.y, act.z);
+			cnt++;
+		}
 	}
 	pivot /= cnt;
 	return Ogre::Vector3(pivot.x, pivot.y, pivot.z);

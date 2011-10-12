@@ -16,7 +16,7 @@
 #include "hull.cpp"
 
 //-------------------------------------------------------------------------------------
-OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1)
+OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true)
 {
 }
 //-------------------------------------------------------------------------------------
@@ -164,10 +164,6 @@ void OgreScretch::createScene() {
 	p.load("d:\\tmp\\cave.xml");
 
 
-	
-
-	
-	
 	ManualObject* manual = MeshUtil::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	passagenode = parentnode->createChildSceneNode();
 	passagenode->attachObject(manual);
@@ -202,26 +198,31 @@ void OgreScretch::createScene() {
 	//formats::Polygon::import("G:\\cavesurveying\\data\\\Pocsakoi.cave",vertexliststr,indicesstr);
 	formats::Therion::import("G:\\cavesurveying\\data\\\DistoX\\2.txt",vertexliststr,indicesstr);
 	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
-/*
-	ManualObject* manualPolygon = MeshUtil::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+
+	/*ManualObject* manualPolygon = MeshUtil::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	polygonNode = parentnode->createChildSceneNode();
 	polygonNode->attachObject(manualPolygon);
-	polygonNode->setPosition(-MeshUtil::getPivotPoint(vertexliststr));
-*/
-	Hull hull2;
-	ManualObject* manualhelper2 = hull2.createHull(p, mSceneMgr);
-	helpernode = parentnode->createChildSceneNode();
-	MeshPtr generatedmesh2 =  manualhelper2->convertToMesh("convertedmesh2");
-	Entity* ent2 =  mSceneMgr->createEntity("cmesh2","convertedmesh2");
+	polygonNode->translate(-MeshUtil::getPivotPoint(vertexliststr)); */
+
+	Hull hull;
+	ManualObject* manuelHull = hull.createHull(p, mSceneMgr);
+	hullNode = parentnode->createChildSceneNode();
+	MeshPtr generatedmesh =  manuelHull->convertToMesh("convertedmesh");
+	Entity* ent =  mSceneMgr->createEntity("cmesh","convertedmesh");
 	
 
-	helpernode->attachObject(ent2);
-	helpernode->translate(-MeshUtil::getPivotPoint(p));
+	hullNode->attachObject(ent);
+	hullNode->translate(-MeshUtil::getPivotPoint(p));
 
-	ManualObject* manual2 = MeshUtil::createManual(mSceneMgr,"polygonpassage","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
-	passagenode = parentnode->createChildSceneNode();
-	passagenode->attachObject(manual2);
-	passagenode->translate(-MeshUtil::getPivotPoint(p));
+	ManualObject* manualPolygon= MeshUtil::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
+	polygonNode = parentnode->createChildSceneNode();
+	polygonNode->attachObject(manualPolygon);
+	polygonNode->translate(-MeshUtil::getPivotPoint(p));
+
+	ManualObject* manualPassage = MeshUtil::createManual(mSceneMgr,"manualslices","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, false, true);
+	passageNode = parentnode->createChildSceneNode();
+	passageNode->attachObject(manualPassage);
+	passageNode->translate(-MeshUtil::getPivotPoint(p));
 
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
 	light->setType(Ogre::Light::LT_POINT);
@@ -326,18 +327,13 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		mCamNode->attachObject(mCamera);
 		break;
 
-	case OIS::KC_2:
-		mCamera->getParentSceneNode()->detachObject(mCamera);
-		mCamNode = mSceneMgr->getSceneNode("CamNode2");
-		mCamNode->attachObject(mCamera);
-		break;
 	case OIS::KC_UP:
-	case OIS::KC_W:
+	
 		parentnode->scale(1.2,1.2,1.2);
 		break;
 
 	case OIS::KC_DOWN:
-	case OIS::KC_S:
+	
 		parentnode->scale(0.8,0.8,0.8);
 		break;
 
@@ -372,6 +368,18 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 			}
 			
 		break;
+	case OIS::KC_H :
+		hullVisible = !hullVisible;
+		hullNode->setVisible(hullVisible);
+		break;
+	case OIS::KC_P :
+		polygonVisible = !polygonVisible;
+		polygonNode->setVisible(polygonVisible);
+		break;
+	case OIS::KC_S :
+		passageVisible = !passageVisible;
+		passageNode->setVisible(passageVisible);
+		break;
 	case OIS::KC_R :
 		
         Ogre::PolygonMode pm;
@@ -388,7 +396,6 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
             pm = Ogre::PM_SOLID;
 			break;
         }
-
         mCamera->setPolygonMode(pm);
        
 		

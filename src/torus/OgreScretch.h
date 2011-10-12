@@ -63,12 +63,13 @@ protected:
     virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 	Ogre::Real mRotate;          // The rotate constant
 	Ogre::Real mMove;
-	Ogre::SceneNode *mCamNode;   // The SceneNode the camera is currently attached to
- 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
+	Ogre::SceneNode *mCamNode;   
+ 	Ogre::Vector3 mDirection;    
 	Ogre::SceneNode *manualnode;
 	Ogre::SceneNode *parentnode;
-	Ogre::SceneNode *helpernode;
-	Ogre::SceneNode *passagenode;
+	Ogre::SceneNode *hullNode;
+	bool hullVisible,passageVisible,polygonVisible;
+	Ogre::SceneNode *passageNode;
 	Ogre::SceneNode *headNode;
 	Ogre::SceneNode *sphereNode;
 	Ogre::SceneNode *polygonNode;
