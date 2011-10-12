@@ -16,7 +16,7 @@
 #include "hull.cpp"
 
 //-------------------------------------------------------------------------------------
-OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true)
+OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true)
 {
 }
 //-------------------------------------------------------------------------------------
@@ -195,14 +195,18 @@ void OgreScretch::createScene() {
 	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
 	std::vector<Index2Str> indicesstr;
 
+	Ogre::ConfigFile mainconfig;
+	mainconfig.load("global.conf");
+	Ogre::String filename = mainconfig.getSetting("path");
+
 	//formats::Polygon::import("G:\\cavesurveying\\data\\\Pocsakoi.cave",vertexliststr,indicesstr);
-	formats::Therion::import("G:\\cavesurveying\\data\\\DistoX\\2.txt",vertexliststr,indicesstr);
+	formats::Therion::import(filename,vertexliststr,indicesstr);
 	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
 
-	/*ManualObject* manualPolygon = MeshUtil::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
-	polygonNode = parentnode->createChildSceneNode();
-	polygonNode->attachObject(manualPolygon);
-	polygonNode->translate(-MeshUtil::getPivotPoint(vertexliststr)); */
+	ManualObject* manualShot = MeshUtil::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+	shotNode = parentnode->createChildSceneNode();
+	shotNode->attachObject(manualShot);
+	shotNode->translate(-MeshUtil::getPivotPoint(vertexliststr)); 
 
 	Hull hull;
 	ManualObject* manuelHull = hull.createHull(p, mSceneMgr);
@@ -380,6 +384,10 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		passageVisible = !passageVisible;
 		passageNode->setVisible(passageVisible);
 		break;
+	case OIS::KC_O:
+		break;
+		shotVisible = !shotVisible;
+		shotNode->setVisible(shotVisible);
 	case OIS::KC_R :
 		
         Ogre::PolygonMode pm;

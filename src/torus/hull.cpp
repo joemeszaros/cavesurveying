@@ -12,7 +12,7 @@ class Hull {
 public:
 	ManualObject* manual;
 
-	void getTracks(SourcePoint sourcefrom, SourcePoint sourceto, std::vector<Point> tracks[],double perimeters[], Point finalintersections[]) {
+	void getTracks(SourcePoint sourcefrom, SourcePoint sourceto, std::vector<Point> tracks[],double perimeters[], Point finalintersections[], Point pivotpoints[]) {
 
 		Point from, to;
 		Vector n, reference, randomvector;
@@ -69,6 +69,7 @@ public:
 			loopcounter = 0;
 			idistance = -1.0;
 			Point pivotpoint = MeshUtil::getPivotPoint(bsourcepoints[j].points);
+			pivotpoints[j] = pivotpoint;
 
 			for(std::vector<BasePoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
 				circlepoint = it->toPoint();
@@ -175,9 +176,12 @@ public:
 		int slower = 0;
 		int cnt = 0;
 		double l = 0;
+		int cnts[2] = { 2 , 2};
 
-		while (runneddistance[0] + runneddistance[1] != perimeters[0] + perimeters[1]) { // && it[0] !=tracks[0].end() && it[1] !=tracks[1].end()) {
+
+		while (runneddistance[0] + runneddistance[1] < (perimeters[0] + perimeters[1])*0.95f ) { // && it[0] !=tracks[0].end() && it[1] !=tracks[1].end()) {
 			
+			cnt++;
 			for(int j=0; j<2;j++) {
 				l = (nexpoints[j]-runners[j]).length();
  				ratio[j] = (runneddistance[j] + l) / perimeters[j];
@@ -198,8 +202,9 @@ public:
 				double m = before / l;
 				runneddistance[slower] += (nexpoints[slower] - runners[slower]).length();
 				runners[slower] = nexpoints[slower];
-				if (it[slower] != tracks[slower].end()) {
+				if (cnts[slower] < tracks[slower].size()) {
 					++(it[slower]);
+					cnts[slower]++;
 					nexpoints[slower] = *it[slower];
 				}
 				double added = ((nexpoints[faster]-runners[faster]) * m).length();
@@ -246,6 +251,7 @@ public:
 			Point finalintersections[2];
 			std::vector<Point> tracks[2];
 			Point sourcepoints[2];
+			Point pivotpoints[2];
 			SourcePoint p1 = *it;
 			++it;
 			available --;
@@ -253,9 +259,9 @@ public:
 			sourcepoints[0] = p1.toPoint();
 			sourcepoints[1] = p2.toPoint();
 			
-			getTracks(p1,p2, tracks, perimeters, finalintersections);
+			getTracks(p1,p2, tracks, perimeters, finalintersections,pivotpoints);
 			
-			jointTracks(tracks, finalintersections, sourcepoints, perimeters);
+			jointTracks(tracks, finalintersections, pivotpoints, perimeters);
 			
 		}
 

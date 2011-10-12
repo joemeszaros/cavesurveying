@@ -68,11 +68,12 @@ protected:
 	Ogre::SceneNode *manualnode;
 	Ogre::SceneNode *parentnode;
 	Ogre::SceneNode *hullNode;
-	bool hullVisible,passageVisible,polygonVisible;
+	bool hullVisible,passageVisible,polygonVisible,shotVisible;
 	Ogre::SceneNode *passageNode;
 	Ogre::SceneNode *headNode;
 	Ogre::SceneNode *sphereNode;
 	Ogre::SceneNode *polygonNode;
+	Ogre::SceneNode *shotNode;
 	double alpha;
 	double alphadiff;
 	CEGUI::OgreRenderer* mRenderer;
