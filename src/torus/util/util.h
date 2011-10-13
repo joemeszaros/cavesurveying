@@ -3,7 +3,7 @@
 
 typedef unsigned long DWORD;
 
-namespace myutil {
+namespace util {
 
 class StringUtil
 {

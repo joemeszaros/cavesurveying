@@ -292,6 +292,7 @@ private:
 	}
 	
 	Vector getIntersection(Vector r0,Vector p2, Vector P,Vector n) {
+
 		Vector result;
 		n = n.normalize();
 		Vector v = (p2 - r0).normalize();
