@@ -164,10 +164,10 @@ void OgreScretch::createScene() {
 	p.load("d:\\tmp\\cave.xml");
 
 
-	ManualObject* manual = MeshUtil::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+	ManualObject* manual = util::Mesh::createManual(mSceneMgr,"mykocka","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	passagenode = parentnode->createChildSceneNode();
 	passagenode->attachObject(manual);
-	passagenode->translate(-MeshUtil::getPivotPoint(p));
+	passagenode->translate(-util::Mesh::getPivotPoint(p));
 
 	Hull hull;
 	ManualObject* manualhelper = hull.createHull(p, mSceneMgr);
@@ -178,18 +178,18 @@ void OgreScretch::createScene() {
 	
 
 	helpernode->attachObject(ent);
-	helpernode->translate(-MeshUtil::getPivotPoint(p));
+	helpernode->translate(-util::Mesh::getPivotPoint(p));
 
 	
 	parentnode->scale(10,10,10);
 	//helpernode->scale(10,10,10);
 	
 	SceneNode* sphereNode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	 MeshUtil::createSphere("mySphereMesh2", 1.3, 20, 20);
+	 util::Mesh::createSphere("mySphereMesh2", 1.3, 20, 20);
 	 Entity* sphereEntity2 = mSceneMgr->createEntity("mySphereEntity2", "mySphereMesh2");
 	 sphereEntity2->setMaterialName("Test2/Cave");
 	 sphereNode2->attachObject(sphereEntity2);
-	 sphereNode2->setPosition(-MeshUtil::getPivotPoint(p));
+	 sphereNode2->setPosition(-util::Mesh::getPivotPoint(p));
 	 
 */
 	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
@@ -203,10 +203,10 @@ void OgreScretch::createScene() {
 	formats::Therion::import(filename,vertexliststr,indicesstr);
 	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
 
-	ManualObject* manualShot = MeshUtil::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+	ManualObject* manualShot = util::Mesh::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
 	shotNode = parentnode->createChildSceneNode();
 	shotNode->attachObject(manualShot);
-	shotNode->translate(-MeshUtil::getPivotPoint(vertexliststr)); 
+	shotNode->translate(-util::Mesh::getPivotPoint(vertexliststr)); 
 
 	Hull hull;
 	ManualObject* manuelHull = hull.createHull(p, mSceneMgr);
@@ -216,17 +216,17 @@ void OgreScretch::createScene() {
 	
 
 	hullNode->attachObject(ent);
-	hullNode->translate(-MeshUtil::getPivotPoint(p));
+	hullNode->translate(-util::Mesh::getPivotPoint(p));
 
-	ManualObject* manualPolygon= MeshUtil::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
+	ManualObject* manualPolygon= util::Mesh::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
 	polygonNode = parentnode->createChildSceneNode();
 	polygonNode->attachObject(manualPolygon);
-	polygonNode->translate(-MeshUtil::getPivotPoint(p));
+	polygonNode->translate(-util::Mesh::getPivotPoint(p));
 
-	ManualObject* manualPassage = MeshUtil::createManual(mSceneMgr,"manualslices","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, false, true);
+	ManualObject* manualPassage = util::Mesh::createManual(mSceneMgr,"manualslices","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, false, true);
 	passageNode = parentnode->createChildSceneNode();
 	passageNode->attachObject(manualPassage);
-	passageNode->translate(-MeshUtil::getPivotPoint(p));
+	passageNode->translate(-util::Mesh::getPivotPoint(p));
 
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
 	light->setType(Ogre::Light::LT_POINT);

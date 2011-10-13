@@ -17,7 +17,7 @@
 
 namespace util
 {
-	class MeshUtil
+	class Mesh
 	{
 	public:
 		static void getMeshInformation(const Ogre::Mesh* const mesh,
@@ -28,7 +28,7 @@ namespace util
 							const Ogre::Vector3 &position  = Ogre::Vector3::ZERO,
 							const Ogre::Quaternion &orient = Ogre::Quaternion::IDENTITY,
 							const Ogre::Vector3 &scale = Ogre::Vector3::UNIT_SCALE);
-		static Ogre::MeshPtr MeshUtil::createMesh();
+		static Ogre::MeshPtr util::Mesh::createMesh();
 		static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname,stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexlist, std::vector<Index2Str> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype = Ogre::RenderOperation::OT_TRIANGLE_LIST);
 		static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
 		static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype, bool shot, bool slices);

@@ -1,5 +1,6 @@
 #include<windows.h>
 #include "point.h"
+#include "util/mathutil.h"
 #include "passage.h"
 #include "util/meshutil.h"
 #include "OgreManualObject.h"
@@ -59,13 +60,13 @@ public:
 
 			loopcounter = 0;
 			idistance = -1.0;
-			Vector pivotpoint = MeshUtil::getPivotPoint(sourcepoints[j].points);
+			Vector pivotpoint =  util::Mesh::getPivotPoint(sourcepoints[j].points);
 			pivotpoints[j] = pivotpoint;
 
 			for(std::vector<EndPoint>::iterator it = sourcepoints[j].points.begin(); it != sourcepoints[j].points.end();++it) {
 				circlepoint = *it;
 
-				i = getScalarSignum(reference, circlepoint-pivotpoint);
+				i = util::Math::getScalarSignum(reference, circlepoint-pivotpoint);
 			
 				if (loopcounter != 0 && i != previ) {
 					
@@ -77,11 +78,11 @@ public:
 						intersection = (i == 0 ? circlepoint : prevcirclepoint);
 						subtract = (i == 0 ? 0 : 1 );
 					} else if (i * previ == -1) { // 0 on the plane
-						intersection = getIntersection(prevcirclepoint, circlepoint, pivotpoint, reference);
+						intersection = util::Math::getIntersection(prevcirclepoint, circlepoint, pivotpoint, reference);
 						subtract = 0.5;
 					}
 
-					if (getScalarSignum(crossproduct, intersection - pivotpoint) >= 0) {
+					if (util::Math::getScalarSignum(crossproduct, intersection - pivotpoint) >= 0) {
 							dist = (intersection - pivotpoint).length();
 							if (dist > idistance){
 								finalintersections[j] = intersection;
@@ -278,28 +279,6 @@ private:
 	void debug(char * s) {
 		OutputDebugString(s);
 		
-	}
-
-	int getScalarSignum(Vector v1, Vector v2) {
-		double crossresult = v1.dot(v2);
-			if (crossresult > 0 )  {
-				return 1;
-			} else if (crossresult < 0) {
-				return -1;
-			} else {
-				return 0;
-			}
-	}
-	
-	Vector getIntersection(Vector r0,Vector p2, Vector P,Vector n) {
-
-		Vector result;
-		n = n.normalize();
-		Vector v = (p2 - r0).normalize();
-		double t = 0;
-		t = ((P-r0).dot(n))/(v.dot(n));
-		result = r0 + v * t;
-		return result;
 	}
 
 };

@@ -4,7 +4,7 @@
 using namespace Ogre;
 
 
-void MeshUtil::getMeshInformation(const Ogre::Mesh* const mesh,
+void util::Mesh::getMeshInformation(const Ogre::Mesh* const mesh,
                         size_t &vertex_count,
                         Ogre::Vector3* &vertices,
                         size_t &index_count,
@@ -124,7 +124,7 @@ void MeshUtil::getMeshInformation(const Ogre::Mesh* const mesh,
 
 
 
-Ogre::MeshPtr MeshUtil::createMesh() {
+Ogre::MeshPtr util::Mesh::createMesh() {
     
     /// Create the mesh via the MeshManager
 		Ogre::MeshPtr msh = MeshManager::getSingleton().createManual("ColourCube", "General");
@@ -251,7 +251,7 @@ Ogre::MeshPtr MeshUtil::createMesh() {
 	}
 
 
-ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexlist, std::vector<Index2Str> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype) {
+ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexlist, std::vector<Index2Str> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype) {
 
 	ManualObject* manual = mSceneMgr->createManualObject(name);
 	manual->setDynamic(true);
@@ -266,7 +266,7 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 	return manual;
 };
 
-ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype) {
+ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype) {
 
 	ManualObject* manual = mSceneMgr->createManualObject(name);
 	manual->setDynamic(true);
@@ -282,7 +282,7 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 };
 
 
-ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype,bool shot, bool slices) {
+ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype,bool shot, bool slices) {
 
 	ManualObject* manual = mSceneMgr->createManualObject(name);
 	manual->setDynamic(true);
@@ -325,7 +325,7 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 	return manual;
 };
 
-Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
+Ogre::Vector3 util::Mesh::getPivotPoint(Passage& p) {
 
 	int cnt = 0;
  	Vector pivot(0,0,0);
@@ -339,7 +339,7 @@ Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
 	return Ogre::Vector3(pivot.x, pivot.y, pivot.z);
 };
 
-Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr) {
+Ogre::Vector3 util::Mesh::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr) {
 	int cnt = 0;
  	Vector pivot(0,0,0);
 	Ogre::Vector3 act;
@@ -356,7 +356,7 @@ Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre:
 }
 
 
-Vector MeshUtil::getPivotPoint(std::vector<EndPoint> &basepoints) {
+Vector util::Mesh::getPivotPoint(std::vector<EndPoint> &basepoints) {
 	int cnt = 0;
  	Vector pivot(0,0,0);
 	Vector act;
@@ -369,7 +369,7 @@ Vector MeshUtil::getPivotPoint(std::vector<EndPoint> &basepoints) {
 	return Vector(pivot.x, pivot.y, pivot.z);
 }
 
-void MeshUtil::createSphere(const std::string& strName, const float r, const int nRings, const int nSegments)
+void util::Mesh::createSphere(const std::string& strName, const float r, const int nRings, const int nSegments)
  {
      MeshPtr pSphere = MeshManager::getSingleton().createManual(strName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
      SubMesh *pSphereVertex = pSphere->createSubMesh();
