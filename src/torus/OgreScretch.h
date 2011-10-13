@@ -74,6 +74,7 @@ protected:
 	Ogre::SceneNode *sphereNode;
 	Ogre::SceneNode *polygonNode;
 	Ogre::SceneNode *shotNode;
+	Ogre::SceneNode *captionNode;
 	double alpha;
 	double alphadiff;
 	CEGUI::OgreRenderer* mRenderer;

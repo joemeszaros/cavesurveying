@@ -14,6 +14,7 @@
 #include <OgreVector3.h>
 #include <OgreSubMesh.h>
 #include "hull.cpp"
+#include "ogre/movabletext.h"
 
 //-------------------------------------------------------------------------------------
 OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true)
@@ -227,6 +228,13 @@ void OgreScretch::createScene() {
 	passageNode = parentnode->createChildSceneNode();
 	passageNode->attachObject(manualPassage);
 	passageNode->translate(-util::Mesh::getPivotPoint(p));
+
+
+	MovableText* msg = new MovableText("TXT_001", "this is the caption","StarWars",1.0,Ogre::ColourValue::Red);
+	msg->setTextAlignment(MovableText::H_CENTER, MovableText::V_ABOVE); // Center horizontally and display above the node
+	captionNode =  parentnode->createChildSceneNode();
+	captionNode->attachObject(msg);
+	captionNode->scale(0.4,0.4,0.4);
 
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
 	light->setType(Ogre::Light::LT_POINT);
@@ -486,6 +494,7 @@ bool OgreScretch::mouseMoved( const OIS::MouseEvent &arg) {
 	if (arg.state.buttonDown(OIS::MB_Right))
 	{
 		parentnode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_WORLD);
+		captionNode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_LOCAL);
 	}
 	return true;
 }
