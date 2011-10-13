@@ -299,10 +299,10 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 			manual->colour(Ogre::ColourValue(1,1,1));
 		}
 		if (it->points.size() > 0 && (slices || shot)) {
-			BasePoint prevoncircle = it->points.back();
+			EndPoint prevoncircle = it->points.back();
 
-			for(std::vector<BasePoint>::iterator it2 = (*it).points.begin(); it2 != (*it).points.end(); ++it2) {
-				//adding sourcepoint->basepoint lines
+			for(std::vector<EndPoint>::iterator it2 = (*it).points.begin(); it2 != (*it).points.end(); ++it2) {
+				//adding sourcepoint->EndPoint lines
 				if (shot) {
 					manual->position(it->x,it->y,it->z);
 					manual->colour(colour);
@@ -356,12 +356,12 @@ Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre:
 }
 
 
-Point MeshUtil::getPivotPoint(std::vector<BasePoint> &basepoints) {
+Point MeshUtil::getPivotPoint(std::vector<EndPoint> &basepoints) {
 	int cnt = 0;
  	Point pivot(0,0,0);
 	Point act;
 
-	for(std::vector<BasePoint>::iterator it = basepoints.begin();it != basepoints.end();++it) {
+	for(std::vector<EndPoint>::iterator it = basepoints.begin();it != basepoints.end();++it) {
 		pivot += it->toPoint();
 		cnt++;
 	}

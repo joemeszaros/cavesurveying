@@ -44,7 +44,7 @@ void Passage::load(const char* pFilename)
 			const char *pZ=pElem2->Attribute("z");
 			if (pX && pY && pZ) 
 			{
-				BasePoint p(atof(pX),atof(pY),atof(pZ));
+				EndPoint p(atof(pX),atof(pY),atof(pZ));
 				printf("%s %s\n",pY,pY);
 				bp.points.push_back(p);
 			}

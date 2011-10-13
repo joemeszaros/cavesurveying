@@ -71,7 +71,7 @@ public:
 			Point pivotpoint = MeshUtil::getPivotPoint(bsourcepoints[j].points);
 			pivotpoints[j] = pivotpoint;
 
-			for(std::vector<BasePoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
+			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
 				circlepoint = it->toPoint();
 
 				i = getScalarSignum(reference, circlepoint-pivotpoint);
@@ -114,7 +114,7 @@ public:
 		for(int j=0; j<2;j++) {
 			loopcounter = 0;
 			
-			for(std::vector<BasePoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
+			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
 				circlepoint = it->toPoint();
 
 				if (loopcounter != 0) {

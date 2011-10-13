@@ -14,21 +14,21 @@
 
 using namespace std;
 
-class BasePoint {
+class EndPoint {
 
 public :
 	double x;
 	double y;
 	double z;
 	Point toPoint() { return Point(x,y,z); };
-	BasePoint(double x, double y, double z) : x(x),y(y),z(z) {}
+	EndPoint(double x, double y, double z) : x(x),y(y),z(z) {}
 };
 
-class SourcePoint : public BasePoint {
+class SourcePoint : public EndPoint {
 public :
-	SourcePoint(double x, double y, double z):BasePoint(x,y,z) { };
-	SourcePoint():BasePoint(0,0,0) { };
-	std::vector<BasePoint> points;	
+	SourcePoint(double x, double y, double z):EndPoint(x,y,z) { };
+	SourcePoint():EndPoint(0,0,0) { };
+	std::vector<EndPoint> points;	
 };
 
 
