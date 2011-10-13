@@ -16,13 +16,10 @@ public:
 		Vector from, to;
 		Vector n, reference, randomvector;
 		
-		SourcePoint bfrom = sourcefrom;
-		from = bfrom;
-		SourcePoint bto = sourceto;//.back();
+		from = sourcefrom;
 		to = sourceto;
 
-		SourcePoint bsourcepoints[2] = {sourcefrom, sourceto};
-		Vector sourcepoints[2] = {from,to};
+		SourcePoint sourcepoints[2] = {sourcefrom, sourceto};
 
 		n = (to-from).normalize();
 		
@@ -42,20 +39,14 @@ public:
 		double idistance = -1.0, crossresult, dist;
 		Vector intersection;
 
-
-//		double perimeters[2];
-
 		double finalloopcounters[2];
 		double subtract = 0,t = 0;
 		bool predicate = false;
 
-		//std::vector<Vector> tracks[2];
 		std::vector<Vector> visitedstations[2];
-
 
 		for	(int index = 0; index < 2; index++) {
 			perimeters[index] = 0;
-			//-runneddistance[index] = 0;
 		}
 		
 
@@ -65,12 +56,13 @@ public:
 		Vector crossproduct = n.cross(reference).normalize();
 
 		for(int j=0; j<2;j++) {
+
 			loopcounter = 0;
 			idistance = -1.0;
-			Vector pivotpoint = MeshUtil::getPivotPoint(bsourcepoints[j].points);
+			Vector pivotpoint = MeshUtil::getPivotPoint(sourcepoints[j].points);
 			pivotpoints[j] = pivotpoint;
 
-			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
+			for(std::vector<EndPoint>::iterator it = sourcepoints[j].points.begin(); it != sourcepoints[j].points.end();++it) {
 				circlepoint = *it;
 
 				i = getScalarSignum(reference, circlepoint-pivotpoint);
@@ -110,10 +102,11 @@ public:
 		}
 
 		Vector first;
+
 		for(int j=0; j<2;j++) {
 			loopcounter = 0;
 			
-			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
+			for(std::vector<EndPoint>::iterator it = sourcepoints[j].points.begin(); it != sourcepoints[j].points.end();++it) {
 				circlepoint = *it;
 
 				if (loopcounter != 0) {
@@ -249,15 +242,12 @@ public:
 			double perimeters[2];
 			Vector finalintersections[2];
 			std::vector<Vector> tracks[2];
-			Vector sourcepoints[2];
 			Vector pivotpoints[2];
 			SourcePoint p1 = *it;
 			++it;
 			available --;
 			SourcePoint p2 = *it;
-			sourcepoints[0] = p1;
-			sourcepoints[1] = p2;
-			
+		
 			getTracks(p1,p2, tracks, perimeters, finalintersections,pivotpoints);
 			
 			jointTracks(tracks, finalintersections, pivotpoints, perimeters);
