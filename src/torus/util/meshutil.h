@@ -32,7 +32,7 @@ public:
 	static Ogre::Vector3 getPivotPoint(Passage& p);
 	static void createSphere(const std::string& strName, const float r, const int nRings = 16, const int nSegments = 16);
 	static Ogre::Vector3 getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr);
-	static Point getPivotPoint(std::vector<EndPoint> &basepoints);
+	static Vector getPivotPoint(std::vector<EndPoint> &basepoints);
 };
 
 #endif

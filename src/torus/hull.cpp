@@ -4,7 +4,6 @@
 #include "util/meshutil.h"
 #include "OgreManualObject.h"
 #include "OgreSceneManager.h"
-typedef Point Vector;
 
 using namespace Ogre;
 
@@ -12,9 +11,9 @@ class Hull {
 public:
 	ManualObject* manual;
 
-	void getTracks(SourcePoint sourcefrom, SourcePoint sourceto, std::vector<Point> tracks[],double perimeters[], Point finalintersections[], Point pivotpoints[]) {
+	void getTracks(SourcePoint sourcefrom, SourcePoint sourceto, std::vector<Vector> tracks[],double perimeters[], Vector finalintersections[], Vector pivotpoints[]) {
 
-		Point from, to;
+		Vector from, to;
 		Vector n, reference, randomvector;
 		
 		SourcePoint bfrom = sourcefrom;
@@ -23,12 +22,12 @@ public:
 		to = sourceto;
 
 		SourcePoint bsourcepoints[2] = {sourcefrom, sourceto};
-		Point sourcepoints[2] = {from,to};
+		Vector sourcepoints[2] = {from,to};
 
 		n = (to-from).normalize();
 		
 		//addtoManual(from, from + n, Ogre::ColourValue(0.6,0.6,1));
-		//addtoManual(Point(0,0,0),Point(-10,3,3),Ogre::ColourValue(1,1,0));
+		//addtoManual(Vector(0,0,0),Vector(-10,3,3),Ogre::ColourValue(1,1,0));
 
 		//create random vector
 		double minvalue = 1.0;
@@ -41,7 +40,7 @@ public:
 		//addtoManual(from+n, from+n + reference ,Ogre::ColourValue(0,1,1));
 
 		double idistance = -1.0, crossresult, dist;
-		Point intersection;
+		Vector intersection;
 
 
 //		double perimeters[2];
@@ -50,8 +49,8 @@ public:
 		double subtract = 0,t = 0;
 		bool predicate = false;
 
-		//std::vector<Point> tracks[2];
-		std::vector<Point> visitedstations[2];
+		//std::vector<Vector> tracks[2];
+		std::vector<Vector> visitedstations[2];
 
 
 		for	(int index = 0; index < 2; index++) {
@@ -61,14 +60,14 @@ public:
 		
 
 		int previ = 0,i = 0, loopcounter = 0;
-		Point prevcirclepoint,circlepoint ;
+		Vector prevcirclepoint,circlepoint ;
 		
-		Point crossproduct = n.cross(reference).normalize();
+		Vector crossproduct = n.cross(reference).normalize();
 
 		for(int j=0; j<2;j++) {
 			loopcounter = 0;
 			idistance = -1.0;
-			Point pivotpoint = MeshUtil::getPivotPoint(bsourcepoints[j].points);
+			Vector pivotpoint = MeshUtil::getPivotPoint(bsourcepoints[j].points);
 			pivotpoints[j] = pivotpoint;
 
 			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
@@ -110,7 +109,7 @@ public:
 			//addtoManual(finalintersections[j],finalintersections[j] -n*1,Ogre::ColourValue(0,1,1));
 		}
 
-		Point first;
+		Vector first;
 		for(int j=0; j<2;j++) {
 			loopcounter = 0;
 			
@@ -135,7 +134,7 @@ public:
 
 			perimeters[j] += (first-circlepoint).length();
 
-			for(std::vector<Point>::iterator it = visitedstations[j].begin(); it != visitedstations[j].end();++it) {
+			for(std::vector<Vector>::iterator it = visitedstations[j].begin(); it != visitedstations[j].end();++it) {
 				tracks[j].push_back(*it);
 			}
 
@@ -149,10 +148,10 @@ public:
 
 
 
-	void jointTracks(std::vector<Point> tracks[], Point finalintersections[], Point sourcepoints[], double perimeters[]) {
+	void jointTracks(std::vector<Vector> tracks[], Vector finalintersections[], Vector sourcepoints[], double perimeters[]) {
 		
-		Point runners[2];
-		Point nexpoints[2];
+		Vector runners[2];
+		Vector nexpoints[2];
 		double runneddistance[2];
 
 		for	(int index = 0; index < 2; index++) {
@@ -160,7 +159,7 @@ public:
 		}
 		
 
-		std::vector<Point>::iterator it[2];
+		std::vector<Vector>::iterator it[2];
 		for(int j=0; j<2;j++) {
 			it[j] = tracks[j].begin();
 			
@@ -248,10 +247,10 @@ public:
 		for (std::vector<SourcePoint>::iterator it = p.points.begin(); available > 0; )
 		{
 			double perimeters[2];
-			Point finalintersections[2];
-			std::vector<Point> tracks[2];
-			Point sourcepoints[2];
-			Point pivotpoints[2];
+			Vector finalintersections[2];
+			std::vector<Vector> tracks[2];
+			Vector sourcepoints[2];
+			Vector pivotpoints[2];
 			SourcePoint p1 = *it;
 			++it;
 			available --;
@@ -276,7 +275,7 @@ private:
 		manual->begin("Test2/ColourTest", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
-	void addtoManual(Point p1, Point p2, Vector n1, Vector n2,Ogre::ColourValue color) {
+	void addtoManual(Vector p1, Vector p2, Vector n1, Vector n2,Ogre::ColourValue color) {
 
 		manual->position(p1.x,p1.y,p1.z);
 		manual->normal(n1.x, n1.y, n1.z);
@@ -302,8 +301,8 @@ private:
 			}
 	}
 	
-	Point getIntersection(Point r0,Point p2, Point P,Vector n) {
-		Point result;
+	Vector getIntersection(Vector r0,Vector p2, Vector P,Vector n) {
+		Vector result;
 		n = n.normalize();
 		Vector v = (p2 - r0).normalize();
 		double t = 0;

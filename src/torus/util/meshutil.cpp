@@ -328,7 +328,7 @@ ManualObject* MeshUtil::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String 
 Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
 
 	int cnt = 0;
- 	Point pivot(0,0,0);
+ 	Vector pivot(0,0,0);
 
 	for (std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end();++it) {
 		
@@ -341,13 +341,13 @@ Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
 
 Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr) {
 	int cnt = 0;
- 	Point pivot(0,0,0);
+ 	Vector pivot(0,0,0);
 	Ogre::Vector3 act;
 
 	for(stdext::hash_map<const Ogre::String,Ogre::Vector3>::iterator it =  vertexliststr.begin();it != vertexliststr.end();++it) {
 		if (it->first.compare(0, 1, "x")) { 
 			act = it->second;
-			pivot += Point(act.x, act.y, act.z);
+			pivot += Vector(act.x, act.y, act.z);
 			cnt++;
 		}
 	}
@@ -356,17 +356,17 @@ Ogre::Vector3 MeshUtil::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre:
 }
 
 
-Point MeshUtil::getPivotPoint(std::vector<EndPoint> &basepoints) {
+Vector MeshUtil::getPivotPoint(std::vector<EndPoint> &basepoints) {
 	int cnt = 0;
- 	Point pivot(0,0,0);
-	Point act;
+ 	Vector pivot(0,0,0);
+	Vector act;
 
 	for(std::vector<EndPoint>::iterator it = basepoints.begin();it != basepoints.end();++it) {
 		pivot += *it;
 		cnt++;
 	}
 	pivot /= cnt;
-	return Point(pivot.x, pivot.y, pivot.z);
+	return Vector(pivot.x, pivot.y, pivot.z);
 }
 
 void MeshUtil::createSphere(const std::string& strName, const float r, const int nRings, const int nSegments)

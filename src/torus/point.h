@@ -2,37 +2,37 @@
 #ifndef POINT_H
 #define POINT_H
 
-class Point {
+class Vector {
 public :
 	double x;  
 	double y;   
 	double z;
 	
-	Point() {
+	Vector() {
 		x = 0; y = 0; z = 0;
 	}
-	Point(double _x,double _y, double _z) {
+	Vector(double _x,double _y, double _z) {
 		x = _x;
 		y = _y;
 		z = _z;
 	}
 
-	Point operator+(Point &p) {
-		return Point(x+p.x,y+p.y,z+p.z);
+	Vector operator+(Vector &p) {
+		return Vector(x+p.x,y+p.y,z+p.z);
 	}
 
-	void operator+=(Point &p) {
+	void operator+=(Vector &p) {
 		x+=p.x;
 		y+=p.y;
 		z+=p.z;
 	}
 
-	Point operator-(Point &p) {
-		return Point(x-p.x,y-p.y,z-p.z);
+	Vector operator-(Vector &p) {
+		return Vector(x-p.x,y-p.y,z-p.z);
 	}
 
-	Point operator/(double per) {
-		return Point(x/per,y/per,z/per);
+	Vector operator/(double per) {
+		return Vector(x/per,y/per,z/per);
 	}
 
 	void operator/=(double per) {
@@ -42,11 +42,11 @@ public :
 	}
 	
 	
-	Point operator*(double per) {
-		return Point(x*per,y*per,z*per);
+	Vector operator*(double per) {
+		return Vector(x*per,y*per,z*per);
 	}
 
-	bool operator==(Point &p) {
+	bool operator==(Vector &p) {
 		return (x == p.x && y == p.y && z == p.z);
 	}
 
@@ -54,22 +54,22 @@ public :
 		return sqrtl(x*x+y*y+z*z);
 	}
 
-	double dot(Point &p) {
+	double dot(Vector &p) {
 		return x*p.x+y*p.y+z*p.z;
 	}
 
-	Point cross(Point &p) {
-		return Point(y*p.z-z*p.y,z*p.x-x*p.z,x*p.y-y*p.x);
+	Vector cross(Vector &p) {
+		return Vector(y*p.z-z*p.y,z*p.x-x*p.z,x*p.y-y*p.x);
 	}
 
-	Point normalize() {
+	Vector normalize() {
 		double l = sqrtl(x*x+y*y+z*z);
-		return Point(x/l,y/l,z/l);
+		return Vector(x/l,y/l,z/l);
 	}
 
 };
 
-typedef Point EndPoint;
+typedef Vector EndPoint;
 
 
 #endif
