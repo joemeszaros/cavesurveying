@@ -385,9 +385,9 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		passageNode->setVisible(passageVisible);
 		break;
 	case OIS::KC_O:
-		break;
 		shotVisible = !shotVisible;
 		shotNode->setVisible(shotVisible);
+		break;
 	case OIS::KC_R :
 		
         Ogre::PolygonMode pm;

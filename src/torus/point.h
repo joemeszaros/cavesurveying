@@ -4,8 +4,8 @@
 
 class Point {
 public :
-	double x;   // x coordinate
-	double y;   // y coordinate
+	double x;  
+	double y;   
 	double z;
 	
 	Point() {
@@ -69,17 +69,5 @@ public :
 
 };
 
-
-
-struct Index {
-	int x;  
-	int y;  
-	int z;    
-	Index(int _x,int _y, int _z) {
-		x = _x;
-		y = _y;
-		z = _z;
-	}
-};
 
 #endif

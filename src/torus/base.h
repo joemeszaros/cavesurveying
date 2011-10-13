@@ -6,18 +6,7 @@
  
 using namespace std;
 
-/*struct Point {
-    double x;   // x coordinate
-    double y;   // y coordinate
-	double z;    
-	Point(double _x,double _y, double _z) {
-		x = _x;
-		y = _y;
-		z = _z;
-	}
 
-	Point() : x(0),y(0),z(0) {}
-}; */
 
 struct Index2Str {
 	string i1;
