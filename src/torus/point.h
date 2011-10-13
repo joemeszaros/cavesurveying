@@ -69,5 +69,7 @@ public :
 
 };
 
+typedef Point EndPoint;
+
 
 #endif

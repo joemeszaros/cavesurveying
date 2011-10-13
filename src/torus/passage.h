@@ -14,16 +14,6 @@
 
 using namespace std;
 
-class EndPoint {
-
-public :
-	double x;
-	double y;
-	double z;
-	Point toPoint() { return Point(x,y,z); };
-	EndPoint(double x, double y, double z) : x(x),y(y),z(z) {}
-};
-
 class SourcePoint : public EndPoint {
 public :
 	SourcePoint(double x, double y, double z):EndPoint(x,y,z) { };

@@ -18,9 +18,9 @@ public:
 		Vector n, reference, randomvector;
 		
 		SourcePoint bfrom = sourcefrom;
-		from = bfrom.toPoint();
+		from = bfrom;
 		SourcePoint bto = sourceto;//.back();
-		to = sourceto.toPoint();
+		to = sourceto;
 
 		SourcePoint bsourcepoints[2] = {sourcefrom, sourceto};
 		Point sourcepoints[2] = {from,to};
@@ -72,7 +72,7 @@ public:
 			pivotpoints[j] = pivotpoint;
 
 			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
-				circlepoint = it->toPoint();
+				circlepoint = *it;
 
 				i = getScalarSignum(reference, circlepoint-pivotpoint);
 			
@@ -115,7 +115,7 @@ public:
 			loopcounter = 0;
 			
 			for(std::vector<EndPoint>::iterator it = bsourcepoints[j].points.begin(); it != bsourcepoints[j].points.end();++it) {
-				circlepoint = it->toPoint();
+				circlepoint = *it;
 
 				if (loopcounter != 0) {
 					perimeters[j] += (circlepoint-prevcirclepoint).length();
@@ -256,8 +256,8 @@ public:
 			++it;
 			available --;
 			SourcePoint p2 = *it;
-			sourcepoints[0] = p1.toPoint();
-			sourcepoints[1] = p2.toPoint();
+			sourcepoints[0] = p1;
+			sourcepoints[1] = p2;
 			
 			getTracks(p1,p2, tracks, perimeters, finalintersections,pivotpoints);
 			

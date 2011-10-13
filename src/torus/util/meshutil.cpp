@@ -332,7 +332,7 @@ Ogre::Vector3 MeshUtil::getPivotPoint(Passage& p) {
 
 	for (std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end();++it) {
 		
-		pivot += it->toPoint();
+		pivot += *it;
 		cnt++;
 	}
 	pivot /= cnt;
@@ -362,7 +362,7 @@ Point MeshUtil::getPivotPoint(std::vector<EndPoint> &basepoints) {
 	Point act;
 
 	for(std::vector<EndPoint>::iterator it = basepoints.begin();it != basepoints.end();++it) {
-		pivot += it->toPoint();
+		pivot += *it;
 		cnt++;
 	}
 	pivot /= cnt;
