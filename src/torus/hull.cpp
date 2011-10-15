@@ -232,9 +232,9 @@ public:
 
 
 	
-	ManualObject* createHull(Passage p, SceneManager * mScrMgr) {
+	ManualObject* createHull(Passage p, SceneManager * mScrMgr,Ogre::String manualName, Ogre::String materialName) {
 		
-		createManualObject(mScrMgr);
+		createManualObject(mScrMgr, manualName, materialName);
 
 		int available = p.points.size()-1;
 
@@ -259,11 +259,11 @@ public:
 		return manual;
 	}
 private:
-	void createManualObject(SceneManager *mSceneMgr) {
+	void createManualObject(SceneManager *mSceneMgr, Ogre::String name,Ogre::String materialname) {
 
-		manual = mSceneMgr->createManualObject("proba");
+		manual = mSceneMgr->createManualObject(name);
 		manual->setDynamic(true);
-		manual->begin("Test2/ColourTest", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
+		manual->begin(materialname, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
 	void addtoManual(Vector p1, Vector p2, Vector n1, Vector n2,Ogre::ColourValue color) {

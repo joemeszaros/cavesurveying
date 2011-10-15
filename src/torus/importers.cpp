@@ -261,8 +261,13 @@ void formats::Therion::import(std::string filename, stdext::hash_map<const std::
 
 		if (line.find("End of survey data.") != -1) dataOK = false;
 
+
 		if (dataOK)
 		{
+			if (!line.compare(0, 1, "*")) { // to starts with "*"
+				continue;
+			}
+
 			ss << line; 
 
 			while (getline(ss,segments,'\t')) {
@@ -322,9 +327,12 @@ void formats::Therion::import(std::string filename, stdext::hash_map<const std::
 
 
 Passage formats::Therion::toPassage(stdext::hash_map<const std::string, Ogre::Vector3> &vertexlist,std::vector<Index2Str> &indices) {
-	std::map<const std::string, SourcePoint> map;
-	Passage p;
+	
 
+	std::map<const std::string, SourcePoint, util::StringIdCmp> map;
+	
+	Passage p;
+	int insnr = 0;
 	for (std::vector<Index2Str>::iterator it = indices.begin(); it != indices.end();++it) {
 		string from = it->i1;
 		string to = it->i2;
@@ -350,7 +358,7 @@ Passage formats::Therion::toPassage(stdext::hash_map<const std::string, Ogre::Ve
 		}
 	}
 	
-	for (std::map<const std::string, SourcePoint>::iterator it = map.begin();it!=map.end();it++) {
+	for (std::map<const std::string, SourcePoint, util::StringIdCmp>::iterator it = map.begin();it!=map.end();it++) {
 		p.points.push_back(it->second);
 	}
 

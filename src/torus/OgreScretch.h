@@ -42,6 +42,7 @@ private:
 	OIS::Keyboard* mKeyboard;
 
 protected:
+	void regenerate(void);
 	void getMeshInformation(const Ogre::Mesh* const mesh,
                         size_t &vertex_count,
                         Ogre::Vector3* &veVector3rtices,

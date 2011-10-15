@@ -149,16 +149,20 @@ void OgreScretch::createScene() {
 	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 
 	
-		MaterialPtr material = MaterialManager::getSingleton().create(
+	MaterialPtr material = MaterialManager::getSingleton().create(
       "Test2/ColourTest", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	Ogre::Pass* pass =  material->getTechnique(0)->getPass(0);
-	pass->setAmbient( 0.5,0.5, 0.5);
+	pass->setAmbient( 139/255.0f,71/255.0f, 38/255.0f);
 	pass->setDiffuse(139/255.0f, 71/255.0f, 38/255.0f,1);
+	
 	pass->setCullingMode(Ogre::CullingMode::CULL_NONE);
 	pass->setLightingEnabled(true);
 	pass->setManualCullingMode(Ogre::ManualCullingMode::MANUAL_CULL_NONE);
-	pass->setPointSize(14.5);
+	pass->setPointSize(2.5);
+	//pass->setShadingMode(Ogre::ShadeOptions::SO_GOURAUD);
+	
 
+	regenerate();
 
 /*
 	Passage p;
@@ -193,48 +197,12 @@ void OgreScretch::createScene() {
 	 sphereNode2->setPosition(-util::Mesh::getPivotPoint(p));
 	 
 */
-	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
-	std::vector<Index2Str> indicesstr;
-
-	Ogre::ConfigFile mainconfig;
-	mainconfig.load("global.conf");
-	Ogre::String filename = mainconfig.getSetting("path");
-
-	//formats::Polygon::import("G:\\cavesurveying\\data\\\Pocsakoi.cave",vertexliststr,indicesstr);
-	formats::Therion::import(filename,vertexliststr,indicesstr);
-	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
-
-	ManualObject* manualShot = util::Mesh::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
-	shotNode = parentnode->createChildSceneNode();
-	shotNode->attachObject(manualShot);
-	shotNode->translate(-util::Mesh::getPivotPoint(vertexliststr)); 
-
-	Hull hull;
-	ManualObject* manuelHull = hull.createHull(p, mSceneMgr);
-	hullNode = parentnode->createChildSceneNode();
-	MeshPtr generatedmesh =  manuelHull->convertToMesh("convertedmesh");
-	Entity* ent =  mSceneMgr->createEntity("cmesh","convertedmesh");
 	
-
-	hullNode->attachObject(ent);
-	hullNode->translate(-util::Mesh::getPivotPoint(p));
-
-	ManualObject* manualPolygon= util::Mesh::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
-	polygonNode = parentnode->createChildSceneNode();
-	polygonNode->attachObject(manualPolygon);
-	polygonNode->translate(-util::Mesh::getPivotPoint(p));
-
-	ManualObject* manualPassage = util::Mesh::createManual(mSceneMgr,"manualslices","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, false, true);
-	passageNode = parentnode->createChildSceneNode();
-	passageNode->attachObject(manualPassage);
-	passageNode->translate(-util::Mesh::getPivotPoint(p));
-
-
-	MovableText* msg = new MovableText("TXT_001", "this is the caption","StarWars",1.0,Ogre::ColourValue::Red);
+	/*MovableText* msg = new MovableText("TXT_001", "this is the caption","StarWars",1.0,Ogre::ColourValue::Red);
 	msg->setTextAlignment(MovableText::H_CENTER, MovableText::V_ABOVE); // Center horizontally and display above the node
 	captionNode =  parentnode->createChildSceneNode();
 	captionNode->attachObject(msg);
-	captionNode->scale(0.4,0.4,0.4);
+	captionNode->scale(0.4,0.4,0.4);*/
 
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
 	light->setType(Ogre::Light::LT_POINT);
@@ -244,7 +212,55 @@ void OgreScretch::createScene() {
 
 }
 
+void OgreScretch::regenerate(void) {
 
+	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
+	std::vector<Index2Str> indicesstr;
+
+	Ogre::ConfigFile mainconfig;
+	mainconfig.load("global.conf");
+	Ogre::String filename = mainconfig.getSetting("path");
+
+	//formats::Polygon::import("G:\\cavesurveying\\data\\\Pocsakoi.cave",vertexliststr,indicesstr);
+	formats::Therion::import(filename,vertexliststr,indicesstr);
+	
+	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
+
+	mSceneMgr->destroyManualObject("polygonmodel");
+	ManualObject* manualShot = util::Mesh::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
+	shotNode = parentnode->createChildSceneNode();
+	shotNode->attachObject(manualShot);
+	shotNode->translate(-util::Mesh::getPivotPoint(vertexliststr)); 
+	shotNode->setVisible(shotVisible);
+
+	Hull hull;
+	mSceneMgr->destroyManualObject("hull");
+	mSceneMgr->destroyEntity("cmesh");
+	ManualObject* manuelHull = hull.createHull(p, mSceneMgr,"hull","Test2/ColourTest");
+	hullNode = parentnode->createChildSceneNode();
+	MeshPtr generatedmesh =  manuelHull->convertToMesh("convertedmesh");
+	Entity* ent =  mSceneMgr->createEntity("cmesh","convertedmesh");
+	
+	
+	hullNode->attachObject(ent);
+	hullNode->translate(-util::Mesh::getPivotPoint(p));
+	hullNode->setVisible(hullVisible);
+
+	mSceneMgr->destroyManualObject("manualshot");
+	ManualObject* manualPolygon= util::Mesh::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
+	polygonNode = parentnode->createChildSceneNode();
+	polygonNode->attachObject(manualPolygon);
+	polygonNode->translate(-util::Mesh::getPivotPoint(p));
+	polygonNode->setVisible(polygonVisible);
+
+	mSceneMgr->destroyManualObject("manualslices");
+	ManualObject* manualPassage = util::Mesh::createManual(mSceneMgr,"manualslices","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, false, true);
+	passageNode = parentnode->createChildSceneNode();
+	passageNode->attachObject(manualPassage);
+	passageNode->translate(-util::Mesh::getPivotPoint(p));
+	passageNode->setVisible(passageVisible);
+
+}
 void OgreScretch::createFrameListener(void){
 
 
@@ -396,7 +412,10 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		shotVisible = !shotVisible;
 		shotNode->setVisible(shotVisible);
 		break;
-	case OIS::KC_R :
+	case OIS::KC_R:
+		regenerate();
+		break;
+	case OIS::KC_M :
 		
         Ogre::PolygonMode pm;
 
@@ -494,7 +513,7 @@ bool OgreScretch::mouseMoved( const OIS::MouseEvent &arg) {
 	if (arg.state.buttonDown(OIS::MB_Right))
 	{
 		parentnode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_WORLD);
-		captionNode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_LOCAL);
+		//captionNode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_LOCAL);
 	}
 	return true;
 }

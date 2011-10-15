@@ -7,11 +7,11 @@
 namespace util {
 
 class String
-{
+	{
 	public:
 		static std::string ToString(long value) {
 			std::stringstream ss;
-			 ss << value;
+			ss << value;
 			return ss.str();
 		}
 
@@ -20,9 +20,19 @@ class String
 			st << value;
 			return st.str();
 		}
-		
 	};
 
+class StringIdCmp {
+	public:
+		bool operator() (const std::string& s1, const std::string& s2) const {
+			return (double)atof(s1.c_str()) < (double)atof(s2.c_str());
+		}
+	};
 }
+
+
+
+
+
 
 #endif
