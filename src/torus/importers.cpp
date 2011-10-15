@@ -331,20 +331,20 @@ Passage formats::Therion::toPassage(stdext::hash_map<const std::string, Ogre::Ve
 
 		if (!to.compare(0, 1, "x")) { // to starts with "x"
 			Ogre::Vector3 act = vertexlist[to];
-			map[from].points.push_back(EndPoint(act.x,act.y,act.z));
+			map[from].points.push_back(EndPoint(act.x,act.y,act.z,to));
 		} else {
 
 			if (map.find(from) == map.end()) { // not in the hashmap
 				Ogre::Vector3 act;
 				act = vertexlist[from];
-				SourcePoint sp = SourcePoint(act.x, act.y, act.z);
+				SourcePoint sp = SourcePoint(act.x, act.y, act.z, from);
 				map[from] = sp;
 			}
 
 			if (map.find(to) == map.end()) {
 				Ogre::Vector3 act;
 				act = vertexlist[to];
-				SourcePoint sp = SourcePoint(act.x, act.y, act.z);
+				SourcePoint sp = SourcePoint(act.x, act.y, act.z, to);
 				map[to] = sp;
 			}
 		}

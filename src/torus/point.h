@@ -69,7 +69,5 @@ public :
 
 };
 
-typedef Vector EndPoint;
-
 
 #endif

@@ -99,9 +99,9 @@ bool OgreScretch::go(void)
 
 	//mRoot->startRendering();
 
-	DWORD elapsedTicks = GetTickCount() - tickAtStart;
+	long elapsedTicks = GetTickCount() - tickAtStart;
 	Ogre::LogManager::getSingletonPtr()->logMessage("*** Elapsed time in ms:  ***");
-	Ogre::LogManager::getSingletonPtr()->logMessage(util::StringUtil::ToString(elapsedTicks));
+	Ogre::LogManager::getSingletonPtr()->logMessage(util::String::ToString(elapsedTicks));
 	
 while(true)
 {
