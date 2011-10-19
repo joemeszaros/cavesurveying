@@ -23,3 +23,19 @@ Vector util::Math::getIntersection(Vector r0,Vector p2, Vector P,Vector n) {
 	result = r0 + v * t;
 	return result;
 }
+
+double util::Math::getAngle(Vector v1,Vector v2) {
+
+	return acos(v1.normalize().dot(v2.normalize()));
+}
+
+Vector util::Math::getSlicePlane(SourcePoint &p) {
+	Vector sum(0,0,0);
+	int cnt = 0;
+	
+
+	for (std::vector<EndPoint>::iterator it =  p.points.begin(); it != p.points.end();++it) {
+		
+	}
+	return Vector(0,0,0);
+}

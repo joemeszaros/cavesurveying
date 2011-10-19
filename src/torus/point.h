@@ -1,4 +1,6 @@
 #include <math.h>
+#include <OgreVector3.h>
+
 #ifndef POINT_H
 #define POINT_H
 
@@ -62,9 +64,17 @@ public :
 		return Vector(y*p.z-z*p.y,z*p.x-x*p.z,x*p.y-y*p.x);
 	}
 
+	Vector operator -() {
+		return Vector(-x,-y,-z);
+	}
+
 	Vector normalize() {
 		double l = sqrtl(x*x+y*y+z*z);
 		return Vector(x/l,y/l,z/l);
+	}
+
+	Ogre::Vector3 toOgreVector() {
+		return Ogre::Vector3(x, y, z);
 	}
 
 };

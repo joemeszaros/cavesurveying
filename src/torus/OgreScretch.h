@@ -13,6 +13,7 @@
 #include <OgreTexture.h>
 #include <OgreTextureManager.h>
 #include <OgreManualObject.h>
+#include <SdkCameraMan.h>
 
 
 #include <CEGUI.h>
@@ -37,6 +38,7 @@ private:
 	Ogre::RenderWindow* mWindow;
 	Ogre::SceneManager* mSceneMgr;
 	Ogre::Camera* mCamera;
+	OgreBites::SdkCameraMan* mCameraMan;     // basic camera controller
 	OIS::InputManager* mInputManager;
 	OIS::Mouse*    mMouse;
 	OIS::Keyboard* mKeyboard;
@@ -76,6 +78,8 @@ protected:
 	Ogre::SceneNode *polygonNode;
 	Ogre::SceneNode *shotNode;
 	Ogre::SceneNode *captionNode;
+	Ogre::SceneNode *lightmoveNode;
+	Ogre::Light *lightmove;
 	double alpha;
 	double alphadiff;
 	CEGUI::OgreRenderer* mRenderer;

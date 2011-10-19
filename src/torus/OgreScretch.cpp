@@ -17,8 +17,10 @@
 #include "ogre/movabletext.h"
 
 //-------------------------------------------------------------------------------------
-OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true)
+OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true),mCameraMan(0)
 {
+	mRotate = 0.13;	
+	mMove = 250;
 }
 //-------------------------------------------------------------------------------------
 OgreScretch::~OgreScretch(void)
@@ -84,9 +86,10 @@ bool OgreScretch::go(void)
 	// Look back along -Z
 	mCamera->lookAt(Ogre::Vector3(0,0,-300));
 	mCamera->setNearClipDistance(1);
+	mCameraMan = new OgreBites::SdkCameraMan(mCamera);   // create a default camera controller
 	// Create one viewport, entire window
 	Ogre::Viewport* vp = mWindow->addViewport(mCamera);
-	vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
+	vp->setBackgroundColour(Ogre::ColourValue(0.4,0.4,0.4));
 
 	// Alter the camera aspect ratio to match the viewport
 	mCamera->setAspectRatio(
@@ -210,10 +213,20 @@ void OgreScretch::createScene() {
 	light->setDiffuseColour(Ogre::ColourValue::White);
 	light->setSpecularColour(Ogre::ColourValue::White);
 
+	lightmove = mSceneMgr->createLight("LightMove");
+	lightmove->setType(Ogre::Light::LT_SPOTLIGHT);
+	lightmove->setDiffuseColour(Ogre::ColourValue::White);
+	lightmove->setSpecularColour(Ogre::ColourValue::White);
+
+	
+
+
+
 }
 
 void OgreScretch::regenerate(void) {
 
+	
 	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
 	std::vector<Index2Str> indicesstr;
 
@@ -236,28 +249,33 @@ void OgreScretch::regenerate(void) {
 	Hull hull;
 	mSceneMgr->destroyManualObject("hull");
 	mSceneMgr->destroyEntity("cmesh");
-	ManualObject* manuelHull = hull.createHull(p, mSceneMgr,"hull","Test2/ColourTest");
+	
+	ManualObject* manuelHull = hull.createHull(p, mSceneMgr,"hull","Cave/Brown");
 	hullNode = parentnode->createChildSceneNode();
 	MeshPtr generatedmesh =  manuelHull->convertToMesh("convertedmesh");
 	Entity* ent =  mSceneMgr->createEntity("cmesh","convertedmesh");
 	
-	
+	//MeshSerializer ser;
+	//ser.exportMesh(generatedmesh.getPointer(), "nyomocso.mesh" );
+
+	Vector pivotpoint = -util::Mesh::getPivotPoint(p);
+
 	hullNode->attachObject(ent);
-	hullNode->translate(-util::Mesh::getPivotPoint(p));
+	hullNode->translate(pivotpoint.toOgreVector());
 	hullNode->setVisible(hullVisible);
 
 	mSceneMgr->destroyManualObject("manualshot");
 	ManualObject* manualPolygon= util::Mesh::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
 	polygonNode = parentnode->createChildSceneNode();
 	polygonNode->attachObject(manualPolygon);
-	polygonNode->translate(-util::Mesh::getPivotPoint(p));
+	polygonNode->translate(pivotpoint.toOgreVector());
 	polygonNode->setVisible(polygonVisible);
 
 	mSceneMgr->destroyManualObject("manualslices");
 	ManualObject* manualPassage = util::Mesh::createManual(mSceneMgr,"manualslices","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, false, true);
 	passageNode = parentnode->createChildSceneNode();
 	passageNode->attachObject(manualPassage);
-	passageNode->translate(-util::Mesh::getPivotPoint(p));
+	passageNode->translate(pivotpoint.toOgreVector());
 	passageNode->setVisible(passageVisible);
 
 }
@@ -291,11 +309,13 @@ void OgreScretch::createFrameListener(void){
 
 
 	// Populate the camera container
-	mCamNode = mCamera->getParentSceneNode();
+	mCamNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 
+		//mCamNode = mSceneMgr->getSceneNode("CamNode1");
+		mCamNode->attachObject(mCamera);
 	// set the rotation and move speed
 	mRotate = 0.13;
-	mMove = 250;
+	mMove = 30;
 
 	mDirection = Ogre::Vector3::ZERO;
 
@@ -339,6 +359,26 @@ bool OgreScretch::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	mKeyboard->capture();
 	mMouse->capture();
 
+
+	if (mCamNode && mDirection.length() > 0) {
+		Ogre::Vector3 dir(0,0,0);
+		if (mDirection.z < 0) {
+			dir = mCamera->getDirection() * 15;
+		} else {
+			dir = -mCamera->getDirection() * 15;
+		}
+
+		if (mDirection.x > 0) {//left 
+			dir = mCamera->getRight()*15;
+		} else if (mDirection.x < 0) {
+			dir = -mCamera->getRight()*15;
+		}
+		mCamNode->translate(dir * evt.timeSinceLastFrame, Ogre::Node::TS_LOCAL);
+		lightmove->setDirection(mCamera->getDirection());
+		lightmove->setPosition(mCamNode->getPosition());
+		
+		
+	}
 	if(mKeyboard->isKeyDown(OIS::KC_ESCAPE))
 		return false;
 	//mCamNode->translate(mDirection * evt.timeSinceLastFrame, Ogre::Node::TS_LOCAL);
@@ -347,48 +387,50 @@ bool OgreScretch::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
 
 bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
+	Ogre::Light *light = mSceneMgr->getLight("Light1");
+
 	switch (arg.key)
 	{
+		case OIS::KC_UP:
+		case OIS::KC_W:
+			mDirection.z = -mMove;
+			break;
+		 
+		case OIS::KC_DOWN:
+		case OIS::KC_S:
+			mDirection.z = mMove;
+			break;
+		 
+		case OIS::KC_LEFT:
+		case OIS::KC_A:
+			mDirection.x = -mMove;
+			break;
+		 
+		case OIS::KC_RIGHT:
+		case OIS::KC_D:
+			mDirection.x = mMove;
+			break;
+		 
+		case OIS::KC_PGDOWN:
+		case OIS::KC_E:
+			mDirection.y = -mMove;
+			break;
+		 
+		case OIS::KC_PGUP:
+		case OIS::KC_Q:
+			mDirection.y = mMove;
+			break;
+
 	case OIS::KC_1:
 		mCamera->getParentSceneNode()->detachObject(mCamera);
 		mCamNode = mSceneMgr->getSceneNode("CamNode1");
 		mCamNode->attachObject(mCamera);
 		break;
-
-	case OIS::KC_UP:
-	
-		parentnode->scale(1.2,1.2,1.2);
-		break;
-
-	case OIS::KC_DOWN:
-	
-		parentnode->scale(0.8,0.8,0.8);
-		break;
-
-	case OIS::KC_LEFT:
-	
-		mDirection.x = -mMove;
-		break;
-
-	case OIS::KC_RIGHT:
-		mDirection.x = mMove;
-		break;
-
-	case OIS::KC_PGDOWN:
-	case OIS::KC_E:
-		mDirection.y = -mMove;
-		break;
-
-	case OIS::KC_PGUP:
-	case OIS::KC_Q:
-		mDirection.y = mMove;
-		break;
-
 	case OIS::KC_ESCAPE: 
 		mShutDown = true;
 		break;
 
-	case OIS::KC_A :
+	case OIS::KC_B :
 			if (alpha-alphadiff >= 0) {
 				alpha -= alphadiff;
 				MaterialPtr mod = MaterialManager::getSingleton().getByName("Test2/ColourTest");
@@ -404,7 +446,7 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		polygonVisible = !polygonVisible;
 		polygonNode->setVisible(polygonVisible);
 		break;
-	case OIS::KC_S :
+	case OIS::KC_I :
 		passageVisible = !passageVisible;
 		passageNode->setVisible(passageVisible);
 		break;
@@ -414,6 +456,13 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		break;
 	case OIS::KC_R:
 		regenerate();
+		break;
+	case OIS::KC_L :
+		
+		light->setVisible(! light->isVisible());
+		break;
+	case OIS::KC_K :
+		lightmove->setVisible(! light->isVisible());
 		break;
 	case OIS::KC_M :
 		
@@ -435,51 +484,50 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
        
 		
 		break;
-	default:
-		break;
 	}
+
+	mCameraMan->injectKeyDown(arg);
 	return true;
 }
 
 bool OgreScretch::keyReleased( const OIS::KeyEvent &arg ){
 
+			switch (arg.key)
+		{
+		case OIS::KC_UP:
+		case OIS::KC_W:
+			mDirection.z = 0;
+			break;
+		 
+		case OIS::KC_DOWN:
+		case OIS::KC_S:
+			mDirection.z = 0;
+			break;
+		 
+		case OIS::KC_LEFT:
+		case OIS::KC_A:
+			mDirection.x = 0;
+			break;
+		 
+		case OIS::KC_RIGHT:
+		case OIS::KC_D:
+			mDirection.x = 0;
+			break;
+		 
+		case OIS::KC_PGDOWN:
+		case OIS::KC_E:
+			mDirection.y = 0;
+			break;
+		 
+		case OIS::KC_PGUP:
+		case OIS::KC_Q:
+			mDirection.y = 0;
+			
+			break;
+		 
+		}
 	CEGUI::System::getSingleton().injectKeyUp(arg.key);
-
-	switch (arg.key)
-	{
-	case OIS::KC_UP:
-	case OIS::KC_W:
-		mDirection.z = 0;
-		break;
-
-	case OIS::KC_DOWN:
-	case OIS::KC_S:
-		mDirection.z = 0;
-		break;
-
-	case OIS::KC_LEFT:
-	case OIS::KC_A:
-		mDirection.x = 0;
-		break;
-
-	case OIS::KC_RIGHT:
-	case OIS::KC_D:
-		mDirection.x = 0;
-		break;
-
-	case OIS::KC_PGDOWN:
-	case OIS::KC_E:
-		mDirection.y = 0;
-		break;
-
-	case OIS::KC_PGUP:
-	case OIS::KC_Q:
-		mDirection.y = 0;
-		break;
-
-	default:
-		break;
-	}
+	mCameraMan->injectKeyUp(arg);
 	return true;
 }
 
@@ -515,24 +563,19 @@ bool OgreScretch::mouseMoved( const OIS::MouseEvent &arg) {
 		parentnode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_WORLD);
 		//captionNode->rotate(Ogre::Vector3(arg.state.Y.rel,arg.state.X.rel,0),Ogre::Degree(5), Ogre::Node::TS_LOCAL);
 	}
+	 mCameraMan->injectMouseMove(arg);
 	return true;
 }
 bool OgreScretch::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id ){
 	CEGUI::System::getSingleton().injectMouseButtonDown(convertButton(id));
-	Ogre::Light *light = mSceneMgr->getLight("Light1");
-	switch (id)
-	{
-	case OIS::MB_Left:
-		light->setVisible(! light->isVisible());
-		break;
-	default:
-		break;
-	}
+	mCameraMan->injectMouseDown(arg, id);
 	return true;
+
 }
 
 bool OgreScretch::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id ){
 	CEGUI::System::getSingleton().injectMouseButtonUp(convertButton(id));
+	mCameraMan->injectMouseUp(arg, id);
 	return true;
 
 }
@@ -556,6 +599,16 @@ extern "C" {
 	{
 		// Create application object
 		OgreScretch app;
+		/*OutputDebugString("------------------------------------\n");
+		Vector v1(0,1,0);
+		Vector v2(-0.6,-0.3,0);
+		float angle = util::Math::getAngle(v1,v2)*(180/3.1415);
+
+*/
+		//OutputDebugString(s);
+		OutputDebugString("------------------------------------\n");
+		
+
 
 
 		try {

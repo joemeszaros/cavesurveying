@@ -12,6 +12,9 @@ class Hull {
 public:
 	ManualObject* manual;
 
+	Hull():manual(0) {
+	}
+
 	void getTracks(SourcePoint sourcefrom, SourcePoint sourceto, std::vector<Vector> tracks[],double perimeters[], Vector finalintersections[], Vector pivotpoints[]) {
 
 		Vector from, to;
@@ -162,7 +165,7 @@ public:
 			nexpoints[j] = *it[j];
 		}
 
-		addtoManual(runners[0],runners[1],(runners[0]-sourcepoints[0]).normalize(), (runners[1]-sourcepoints[1]).normalize(), Ogre::ColourValue(0,0,1));
+		addtoManual(runners[0],runners[1],(runners[0]-sourcepoints[0]).normalize(), (runners[1]-sourcepoints[1]).normalize(), Ogre::ColourValue(0,0,1),0.0, 0.0);
 
 		double ratio[2];
 		int faster = 0;
@@ -172,7 +175,7 @@ public:
 		int cnts[2] = { 2 , 2};
 
 
-		while (runneddistance[0] + runneddistance[1] < (perimeters[0] + perimeters[1])*0.95f ) { // && it[0] !=tracks[0].end() && it[1] !=tracks[1].end()) {
+		while (runneddistance[0] + runneddistance[1] <= (perimeters[0] + perimeters[1])*1.0f ) { // && it[0] !=tracks[0].end() && it[1] !=tracks[1].end()) {
 			
 			cnt++;
 			for(int j=0; j<2;j++) {
@@ -217,13 +220,14 @@ public:
 				
 				
 			}
-			
-			addtoManual(runners[0],runners[1],(runners[0]-sourcepoints[0]).normalize(), (runners[1]-sourcepoints[1]).normalize(), Ogre::ColourValue(0.7,0.7,0,0.5));
+			double u1 = runneddistance[0]/perimeters[0];
+			double u2 = runneddistance[1]/perimeters[1];
+			addtoManual(runners[0],runners[1],(runners[0]-sourcepoints[0]).normalize(), (runners[1]-sourcepoints[1]).normalize(), Ogre::ColourValue(0.7,0.7,0,0.5), u1, u2);
 			
 			if (finalintersections[0] == nexpoints[0] && finalintersections[1] == nexpoints[1]) {
 				runneddistance[0] += (nexpoints[0] - runners[0]).length();
 				runneddistance[1] += (nexpoints[1] - runners[1]).length();
-				addtoManual(nexpoints[0],nexpoints[1],(nexpoints[0]-sourcepoints[0]).normalize(), (nexpoints[1]-sourcepoints[1]).normalize(),Ogre::ColourValue(0,0,1,0.5));
+				addtoManual(nexpoints[0],nexpoints[1],(nexpoints[0]-sourcepoints[0]).normalize(), (nexpoints[1]-sourcepoints[1]).normalize(),Ogre::ColourValue(0,0,1,0.5), 1.0, 1.0);
 				break;
 			}
 
@@ -233,7 +237,7 @@ public:
 
 	
 	ManualObject* createHull(Passage p, SceneManager * mScrMgr,Ogre::String manualName, Ogre::String materialName) {
-		
+
 		createManualObject(mScrMgr, manualName, materialName);
 
 		int available = p.points.size()-1;
@@ -260,20 +264,22 @@ public:
 	}
 private:
 	void createManualObject(SceneManager *mSceneMgr, Ogre::String name,Ogre::String materialname) {
-
+		
 		manual = mSceneMgr->createManualObject(name);
 		manual->setDynamic(true);
 		manual->begin(materialname, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
 	}
 
-	void addtoManual(Vector p1, Vector p2, Vector n1, Vector n2,Ogre::ColourValue color) {
+	void addtoManual(Vector p1, Vector p2, Vector n1, Vector n2,Ogre::ColourValue color, double u1, double u2) {
 
 		manual->position(p1.x,p1.y,p1.z);
 		manual->normal(n1.x, n1.y, n1.z);
 		manual->colour(color);
+		manual->textureCoord(0.0,u1);
 		manual->position(p2.x,p2.y,p2.z);
 		manual->normal(n2.x,n2.y,n2.z);
 		manual->colour(color);
+		manual->textureCoord(1.0,u2);
 	}
 
 	void debug(char * s) {

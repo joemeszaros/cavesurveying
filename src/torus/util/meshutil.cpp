@@ -325,7 +325,7 @@ ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::Strin
 	return manual;
 };
 
-Ogre::Vector3 util::Mesh::getPivotPoint(Passage& p) {
+Vector util::Mesh::getPivotPoint(Passage& p) {
 
 	int cnt = 0;
  	Vector pivot(0,0,0);
@@ -336,7 +336,7 @@ Ogre::Vector3 util::Mesh::getPivotPoint(Passage& p) {
 		cnt++;
 	}
 	pivot /= cnt;
-	return Ogre::Vector3(pivot.x, pivot.y, pivot.z);
+	return pivot;
 };
 
 Ogre::Vector3 util::Mesh::getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr) {

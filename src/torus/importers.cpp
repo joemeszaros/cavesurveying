@@ -256,7 +256,7 @@ void formats::Therion::import(std::string filename, stdext::hash_map<const std::
 	double irany;
 	double lejtes;
 	int pos = -1;	
-
+	bool skip = false;
 	while(getline(in,line)) {
 
 		if (line.find("End of survey data.") != -1) dataOK = false;
@@ -264,10 +264,26 @@ void formats::Therion::import(std::string filename, stdext::hash_map<const std::
 
 		if (dataOK)
 		{
-			if (!line.compare(0, 1, "*")) { // to starts with "*"
+			if (!line.compare(0, 1, "#")) { // to starts with "*"
+				continue;
+			}
+		
+			/*if (!line.compare(0, 2, "/*")) { // to starts with "*"
+				skip = true;
 				continue;
 			}
 
+			if (!line.compare(0, 2, "*")) { // to starts with "*"
+				skip = false;
+				if (line.length() == 2) {
+					continue;
+				}
+			}
+
+			if (skip == true) {
+				continue;
+			}
+*/
 			ss << line; 
 
 			while (getline(ss,segments,'\t')) {
