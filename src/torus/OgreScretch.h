@@ -79,6 +79,7 @@ protected:
 	Ogre::SceneNode *shotNode;
 	Ogre::SceneNode *captionNode;
 	Ogre::SceneNode *lightmoveNode;
+	Ogre::SceneNode *planesNode;
 	Ogre::Light *lightmove;
 	double alpha;
 	double alphadiff;

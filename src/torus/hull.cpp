@@ -6,11 +6,11 @@
 #include "OgreManualObject.h"
 #include "OgreSceneManager.h"
 
-using namespace Ogre;
+using namespace simplex;
 
 class Hull {
 public:
-	ManualObject* manual;
+	Ogre::ManualObject* manual;
 
 	Hull():manual(0) {
 	}
@@ -236,7 +236,7 @@ public:
 
 
 	
-	ManualObject* createHull(Passage p, SceneManager * mScrMgr,Ogre::String manualName, Ogre::String materialName) {
+	Ogre::ManualObject* createHull(Passage p, Ogre::SceneManager * mScrMgr,Ogre::String manualName, Ogre::String materialName) {
 
 		createManualObject(mScrMgr, manualName, materialName);
 
@@ -263,7 +263,7 @@ public:
 		return manual;
 	}
 private:
-	void createManualObject(SceneManager *mSceneMgr, Ogre::String name,Ogre::String materialname) {
+	void createManualObject(Ogre::SceneManager *mSceneMgr, Ogre::String name,Ogre::String materialname) {
 		
 		manual = mSceneMgr->createManualObject(name);
 		manual->setDynamic(true);

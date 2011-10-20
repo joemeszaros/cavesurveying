@@ -29,13 +29,19 @@ double util::Math::getAngle(Vector v1,Vector v2) {
 	return acos(v1.normalize().dot(v2.normalize()));
 }
 
-Vector util::Math::getSlicePlane(SourcePoint &p) {
-	Vector sum(0,0,0);
+simplex::Plane util::Math::getBestFittingPlane(SourcePoint &p) {
+	int size = p.points.size();
+	float *points = new float[size*3];
 	int cnt = 0;
-	
-
-	for (std::vector<EndPoint>::iterator it =  p.points.begin(); it != p.points.end();++it) {
-		
+	for (std::vector<EndPoint>::iterator it = p.points.begin(); it != p.points.end();++it) {
+		points[cnt++] = it->x;
+		points[cnt++] = it->y;
+		points[cnt++] = it->z;
 	}
-	return Vector(0,0,0);
+
+	float plane[4];
+	
+	getBestFitPlane(3,points,sizeof(float)*3,0,0,plane);
+	//printf("Plane: %f %f %f %f\r\n", plane[0], plane[1], plane[2] );
+	return simplex::Plane(plane[0], plane[1], plane[2], plane[3]);
 }

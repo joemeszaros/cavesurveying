@@ -14,6 +14,7 @@
 #define PASSAGE_H
 
 using namespace std;
+using namespace simplex;
 
 class EndPoint : public Vector {
 public:

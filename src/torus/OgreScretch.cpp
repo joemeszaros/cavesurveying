@@ -149,7 +149,7 @@ void OgreScretch::createScene() {
 
 	
 
-	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	parentnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("parentNode");
 
 	
 	MaterialPtr material = MaterialManager::getSingleton().create(
@@ -245,7 +245,7 @@ void OgreScretch::regenerate(void) {
 	shotNode->attachObject(manualShot);
 	shotNode->translate(-util::Mesh::getPivotPoint(vertexliststr)); 
 	shotNode->setVisible(shotVisible);
-
+	
 	Hull hull;
 	mSceneMgr->destroyManualObject("hull");
 	mSceneMgr->destroyEntity("cmesh");
@@ -259,11 +259,11 @@ void OgreScretch::regenerate(void) {
 	//ser.exportMesh(generatedmesh.getPointer(), "nyomocso.mesh" );
 
 	Vector pivotpoint = -util::Mesh::getPivotPoint(p);
-
+	
 	hullNode->attachObject(ent);
 	hullNode->translate(pivotpoint.toOgreVector());
 	hullNode->setVisible(hullVisible);
-
+	
 	mSceneMgr->destroyManualObject("manualshot");
 	ManualObject* manualPolygon= util::Mesh::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
 	polygonNode = parentnode->createChildSceneNode();
@@ -277,6 +277,36 @@ void OgreScretch::regenerate(void) {
 	passageNode->attachObject(manualPassage);
 	passageNode->translate(pivotpoint.toOgreVector());
 	passageNode->setVisible(passageVisible);
+
+	simplex::Plane* planes = util::Mesh::createBestFitPlanes(p);
+
+	planesNode = parentnode->createChildSceneNode();
+	int id = 0;
+	int cnt = 0;
+
+	for(std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end(); ++it) {
+		simplex::Plane p = planes[cnt++];
+		Ogre::Plane plane(p.a, p.b, p.c, p.d);
+		std::stringstream ss;
+		ss << "ground";
+		ss << id++;
+		std::stringstream ss2;
+		ss2 <<  "groundentinty" << id;
+		Ogre::String groundname;
+		ss >> groundname;
+		Ogre::String groundentname;
+		ss2 >> groundentname;
+		Ogre::MeshManager::getSingleton().createPlane(groundname , Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,    plane, 10, 10, 10, 10, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+		Ogre::Entity* entGround = mSceneMgr->createEntity(groundentname , groundname);
+		SceneNode * node = planesNode->createChildSceneNode();
+		node->attachObject(entGround);
+		node->translate(it->toOgreVector());
+		entGround->setMaterialName("Test2/ColourTest");
+		entGround->setCastShadows(false);
+	}
+
+	planesNode->translate(pivotpoint.toOgreVector());
+
 
 }
 void OgreScretch::createFrameListener(void){
