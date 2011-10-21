@@ -286,7 +286,9 @@ void OgreScretch::regenerate(void) {
 	int size = p.points.size();
 	for(std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end(); ++it) {
 		simplex::Plane p = planes[cnt++];
-		Ogre::Plane plane(p.a, p.b, p.c, p.d);
+		double* params = p.getParameters();
+		Ogre::Plane plane(p.normal.toOgreVector(),p.distanceFromOrigo());
+//		Ogre::Plane plane(params[0],params[1], params[2], params[3]);
 		std::stringstream ss;
 		ss << "ground";
 		ss << id++;

@@ -86,13 +86,34 @@ namespace simplex {
 	public:
 		Vector normal;
 		Vector point;
-		double a;
-		double b;
-		double c;
-		double d;
 
-		Plane() : a(0),b(0),c(0),d(0) {}
-		Plane(double a, double b, double c, double d) : a(a), b(b),c(c),d(d) {	}
+
+		Plane() : normal(Vector(0,0,0)),point(Vector(0,0,0)) {}
+
+		Plane(double a, double b, double c, double d)  {
+			normal = Vector(a,b,c);
+			double t = -d / (a*a + b*b + c*c);
+			point = normal * t;
+		}
+		
+		Plane(Vector &normal, Vector &point) {
+			this->normal = normal;
+			this->point = point;
+		}
+
+		double* getParameters() {
+			double *p = new double[4];
+			p[0] = normal.x;
+			p[1] = normal.y;
+			p[2] = normal.z;
+			p[3] =  0 - point.dot(normal);
+			return p;
+		}
+
+		double distanceFromOrigo() {
+			return 0-point.length();
+		}
+		
 	};
 }
 
