@@ -238,6 +238,7 @@ void OgreScretch::regenerate(void) {
 	formats::Therion::import(filename,vertexliststr,indicesstr);
 	
 	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
+	orderSourcePoints(p);
 
 	mSceneMgr->destroyManualObject("polygonmodel");
 	ManualObject* manualShot = util::Mesh::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
@@ -298,6 +299,7 @@ void OgreScretch::regenerate(void) {
 		ss >> groundname;
 		Ogre::String groundentname;
 		ss2 >> groundentname;
+		mSceneMgr->destroyEntity(groundentname);
 		Ogre::MeshManager::getSingleton().createPlane(groundname , Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,    plane, 10, 10, 10, 10, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
 		Ogre::Entity* entGround = mSceneMgr->createEntity(groundentname , groundname);
 		SceneNode * node = planesNode->createChildSceneNode();
@@ -312,6 +314,22 @@ void OgreScretch::regenerate(void) {
 
 
 }
+
+void  OgreScretch::orderSourcePoints(Passage p) {
+		std::vector<SourcePoint> copy;
+		
+		for (std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end();++it) {
+			copy.push_back(*it);
+		}
+
+		p.points.clear();
+		for (std::vector<SourcePoint>::iterator it =copy.begin(); it != copy.end();++it) {
+			simplex::Plane plane = util::Math::getBestFittingPlane(*it);
+			p.points.push_back(util::Math::orderEndPoints(*it, plane));
+		}
+
+
+	}
 void OgreScretch::createFrameListener(void){
 
 

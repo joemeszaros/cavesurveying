@@ -10,6 +10,7 @@
 #include "point.h"
 #include "util/util.h"
 
+
 #ifndef PASSAGE_H
 #define PASSAGE_H
 
@@ -36,6 +37,8 @@ class Passage {
 public:
 	std::vector<SourcePoint> points;
 	void load(const char* pFilename);
+
+
 };
 
 

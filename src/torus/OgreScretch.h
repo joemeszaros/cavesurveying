@@ -18,7 +18,7 @@
 
 #include <CEGUI.h>
 #include <RendererModules/Ogre/CEGUIOgreRenderer.h>
-
+#include "passage.h"
 using namespace Ogre;
 
 class OgreScretch : public Ogre::WindowEventListener, public Ogre::FrameListener
@@ -44,6 +44,7 @@ private:
 	OIS::Keyboard* mKeyboard;
 
 protected:
+	void orderSourcePoints(Passage p);
 	void regenerate(void);
 	void getMeshInformation(const Ogre::Mesh* const mesh,
                         size_t &vertex_count,

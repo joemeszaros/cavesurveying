@@ -113,6 +113,20 @@ namespace simplex {
 		double distanceFromOrigo() {
 			return 0-point.length();
 		}
+
+		Vector getProjection(Vector m) {
+			double* p = getParameters();
+			double a = p[0];
+			double b = p[1];
+			double c = p[2];
+			double d = p[3];
+			double u = m.x, v = m.y, w = m.z;
+			double t0 = -((a*u + b*v + c*w + d)/(a*a + b*b + c*c));
+			double x0 = u + a*t0;
+			double y0 = v + b*t0;
+			double z0 = w + c*t0;
+			return Vector(x0,y0,z0);
+		}
 		
 	};
 }
