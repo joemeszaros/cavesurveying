@@ -92,7 +92,7 @@ namespace simplex {
 		double d;
 
 		Plane() : a(0),b(0),c(0),d(0) {}
-		Plane(double a, double b, double c, double d) : a(a), b(b),c(c),d(c) {	}
+		Plane(double a, double b, double c, double d) : a(a), b(b),c(c),d(d) {	}
 	};
 }
 

@@ -41,7 +41,7 @@ simplex::Plane util::Math::getBestFittingPlane(SourcePoint &p) {
 
 	float plane[4];
 	
-	getBestFitPlane(3,points,sizeof(float)*3,0,0,plane);
+	getBestFitPlane(size,points,sizeof(float)*3,0,0,plane);
 	//printf("Plane: %f %f %f %f\r\n", plane[0], plane[1], plane[2] );
 	return simplex::Plane(plane[0], plane[1], plane[2], plane[3]);
 }

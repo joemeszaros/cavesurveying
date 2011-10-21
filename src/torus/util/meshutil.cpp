@@ -209,12 +209,12 @@ simplex::Plane* util::Mesh::createBestFitPlanes(Passage &passage) {
 	int id = 0;
 	int cnt = 0;
 	
-	SourcePoint prev = passage.points.front();
+	
 
 	for(std::vector<SourcePoint>::iterator it = passage.points.begin(); it != passage.points.end(); ++it) {
 	
-		prev = *it;
-		*(planes+cnt++) = util::Math::getBestFittingPlane(*it);
+		planes[cnt] = util::Math::getBestFittingPlane(*it);
+		cnt++;
 	}
 
 	return planes;

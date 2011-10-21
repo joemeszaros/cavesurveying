@@ -17,7 +17,7 @@
 #include "ogre/movabletext.h"
 
 //-------------------------------------------------------------------------------------
-OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true),mCameraMan(0)
+OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true),planeVisible(true),mCameraMan(0)
 {
 	mRotate = 0.13;	
 	mMove = 250;
@@ -283,7 +283,7 @@ void OgreScretch::regenerate(void) {
 	planesNode = parentnode->createChildSceneNode();
 	int id = 0;
 	int cnt = 0;
-
+	int size = p.points.size();
 	for(std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end(); ++it) {
 		simplex::Plane p = planes[cnt++];
 		Ogre::Plane plane(p.a, p.b, p.c, p.d);
@@ -300,12 +300,13 @@ void OgreScretch::regenerate(void) {
 		Ogre::Entity* entGround = mSceneMgr->createEntity(groundentname , groundname);
 		SceneNode * node = planesNode->createChildSceneNode();
 		node->attachObject(entGround);
-		node->translate(it->toOgreVector());
+		//node->translate(it->toOgreVector());
 		entGround->setMaterialName("Test2/ColourTest");
 		entGround->setCastShadows(false);
 	}
 
 	planesNode->translate(pivotpoint.toOgreVector());
+	planesNode->setVisible(planeVisible);
 
 
 }
@@ -467,6 +468,10 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 				mod->setDiffuse(139/255.0f, 71/255.0f, 38/255.0f,alpha);
 			}
 			
+		break;
+	case OIS::KC_U:
+		planeVisible = ! planeVisible;
+		planesNode->setVisible(planeVisible);
 		break;
 	case OIS::KC_H :
 		hullVisible = !hullVisible;

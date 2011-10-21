@@ -71,7 +71,7 @@ protected:
 	Ogre::SceneNode *manualnode;
 	Ogre::SceneNode *parentnode;
 	Ogre::SceneNode *hullNode;
-	bool hullVisible,passageVisible,polygonVisible,shotVisible;
+	bool hullVisible,passageVisible,polygonVisible,shotVisible,planeVisible;
 	Ogre::SceneNode *passageNode;
 	Ogre::SceneNode *headNode;
 	Ogre::SceneNode *sphereNode;
