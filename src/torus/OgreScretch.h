@@ -72,7 +72,7 @@ protected:
 	Ogre::SceneNode *manualnode;
 	Ogre::SceneNode *parentnode;
 	Ogre::SceneNode *hullNode;
-	bool hullVisible,passageVisible,polygonVisible,shotVisible,planeVisible;
+	bool hullVisible,passageVisible,polygonVisible,shotVisible,planeVisible,headVisible;
 	Ogre::SceneNode *passageNode;
 	Ogre::SceneNode *headNode;
 	Ogre::SceneNode *sphereNode;
@@ -81,10 +81,13 @@ protected:
 	Ogre::SceneNode *captionNode;
 	Ogre::SceneNode *lightmoveNode;
 	Ogre::SceneNode *planesNode;
+	Ogre::SceneNode *headNodes;
 	Ogre::Light *lightmove;
 	double alpha;
 	double alphadiff;
+	int hullLimit;
 	CEGUI::OgreRenderer* mRenderer;
+	simplex::Plane getPlane();
 
 	bool mShutDown;
  

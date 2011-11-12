@@ -28,7 +28,17 @@ class SourcePoint : public EndPoint {
 public :
 	SourcePoint(double x, double y, double z, std::string Id = "undefined"):EndPoint(x,y,z,Id) { };
 	SourcePoint():EndPoint(0,0,0) { };
-	std::vector<EndPoint> points;	
+	std::vector<EndPoint> points;
+	SourcePoint copy() {
+		SourcePoint result;
+		result.x = x;
+		result.y = y;
+		result.z = z;
+		for (std::vector<EndPoint>::iterator it = points.begin(); it != points.end();++it) {
+			result.points.push_back(*it);
+		}
+		return result;
+	};
 };
 
 

@@ -354,8 +354,18 @@ Passage formats::Therion::toPassage(stdext::hash_map<const std::string, Ogre::Ve
 		string to = it->i2;
 
 		if (!to.compare(0, 1, "x")) { // to starts with "x"
+
+			
+			if (map.find(from) == map.end()) { // not in the hashmap
+				Ogre::Vector3 act;
+				act = vertexlist[from];
+				SourcePoint sp = SourcePoint(act.x, act.y, act.z, from);
+				map[from] = sp;
+			}
+
 			Ogre::Vector3 act = vertexlist[to];
 			map[from].points.push_back(EndPoint(act.x,act.y,act.z,to));
+
 		} else {
 
 			if (map.find(from) == map.end()) { // not in the hashmap

@@ -1,8 +1,8 @@
 #include "mathutil.h"
 
 
-int util::Math::getScalarSignum(Vector v1, Vector v2) {
-	double crossresult = v1.dot(v2);
+int util::Math::getDotSignum(Vector v1, Vector v2) {
+		double crossresult = v1.dot(v2);
 		if (crossresult > 0 )  {
 			return 1;
 		} else if (crossresult < 0) {
@@ -11,8 +11,27 @@ int util::Math::getScalarSignum(Vector v1, Vector v2) {
 			return 0;
 		}
 }
-	
 
+float util::Math::getPlaneDistance(Vector &planepoint, Vector &normal, Vector &point) {
+	return normal.dot(point-planepoint);
+}
+
+int util::Math::getPlaneSignum(Vector &planepoint, Vector &normal, Vector &point) {
+	float dist = getPlaneDistance(planepoint, normal, point);
+	if (dist > 0) {
+		return 1;
+	} else if (dist < 0) {
+		return -1;
+	} else {
+		return 0;
+	}
+}
+	
+//
+// r0: the first point of the line
+// p2: the second point of the line
+// P : point of the plane
+// n : normal vector of the plane
 Vector util::Math::getIntersection(Vector r0,Vector p2, Vector P,Vector n) {
 
 	Vector result;
@@ -85,7 +104,7 @@ SourcePoint util::Math::orderEndPoints(SourcePoint &orig,simplex::Plane &plane) 
 
 }
 
-double util::Math::getAngle(Vector v1,Vector v2, Vector normal) {
+double util::Math::getAngle(Vector v1,Vector v2, Vector normal)    {
 
 	normal.normalize();
 	double angle =  acos(v1.normalize().dot(v2.normalize()));

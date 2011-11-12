@@ -14,12 +14,14 @@ namespace util
 	class Math
 	{
 	public:
-		static int getScalarSignum(Vector v1, Vector v2);
+		static int getDotSignum(Vector v1, Vector v2);
 		static simplex::Vector getIntersection(Vector r0,Vector p2, Vector P,Vector n);
 		static double getAngle(Vector v1,Vector v2);
 		static double getAngle(Vector v1,Vector v2, Vector normal);
 		static simplex::Plane getBestFittingPlane(SourcePoint &p);
 		static SourcePoint orderEndPoints(SourcePoint &orig,simplex::Plane &plane);
+		static float getPlaneDistance(Vector &planepoint, Vector &normal, Vector &point);
+		static int getPlaneSignum(Vector &planepoint, Vector &normal, Vector &point);
 	};
 }
 #endif

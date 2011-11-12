@@ -17,7 +17,7 @@
 #include "ogre/movabletext.h"
 
 //-------------------------------------------------------------------------------------
-OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(true),polygonVisible(true), hullVisible(true),shotVisible(true),planeVisible(true),mCameraMan(0)
+OgreScretch::OgreScretch(void) : mRoot(0),    mPluginsCfg(Ogre::StringUtil::BLANK),mResourcesCfg(Ogre::StringUtil::BLANK),mCamera(0),alpha(1.0),alphadiff(0.1),passageVisible(false),polygonVisible(true), hullVisible(false),shotVisible(false),planeVisible(false),mCameraMan(0),hullLimit(300), headVisible(true)
 {
 	mRotate = 0.13;	
 	mMove = 250;
@@ -227,6 +227,7 @@ void OgreScretch::createScene() {
 void OgreScretch::regenerate(void) {
 
 	
+	
 	stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexliststr;
 	std::vector<Index2Str> indicesstr;
 
@@ -238,7 +239,9 @@ void OgreScretch::regenerate(void) {
 	formats::Therion::import(filename,vertexliststr,indicesstr);
 	
 	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
-	orderSourcePoints(p);
+	//orderSourcePoints(p);
+
+	Vector pivotpoint = -util::Mesh::getPivotPoint(p);
 
 	mSceneMgr->destroyManualObject("polygonmodel");
 	ManualObject* manualShot = util::Mesh::createManual(mSceneMgr,"polygonmodel","BaseWhiteNoLighting",vertexliststr,indicesstr,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST);
@@ -247,24 +250,23 @@ void OgreScretch::regenerate(void) {
 	shotNode->translate(-util::Mesh::getPivotPoint(vertexliststr)); 
 	shotNode->setVisible(shotVisible);
 	
-	Hull hull;
+	
 	mSceneMgr->destroyManualObject("hull");
-	mSceneMgr->destroyEntity("cmesh");
-	
-	ManualObject* manuelHull = hull.createHull(p, mSceneMgr,"hull","Cave/Brown");
+	Hull hull;
+	hull.limit = hullLimit;
+	ManualObject* manualHull = 0;
+	manualHull = hull.createHull(p, mSceneMgr,"hull","Cave/Brown");
 	hullNode = parentnode->createChildSceneNode();
-	MeshPtr generatedmesh =  manuelHull->convertToMesh("convertedmesh");
-	Entity* ent =  mSceneMgr->createEntity("cmesh","convertedmesh");
-	
+
 	//MeshSerializer ser;
 	//ser.exportMesh(generatedmesh.getPointer(), "nyomocso.mesh" );
-
-	Vector pivotpoint = -util::Mesh::getPivotPoint(p);
 	
-	hullNode->attachObject(ent);
-	hullNode->translate(pivotpoint.toOgreVector());
+	hullNode->attachObject(manualHull);
 	hullNode->setVisible(hullVisible);
+	hullNode->translate(pivotpoint.toOgreVector());
 	
+	
+	///Vector pivotpoint = -util::Mesh::getPivotPoint(p);
 	mSceneMgr->destroyManualObject("manualshot");
 	ManualObject* manualPolygon= util::Mesh::createManual(mSceneMgr,"manualshot","BaseWhiteNoLighting",p,Ogre::ColourValue(1,0,0,1),Ogre::RenderOperation::OT_LINE_LIST, true, false);
 	polygonNode = parentnode->createChildSceneNode();
@@ -279,6 +281,60 @@ void OgreScretch::regenerate(void) {
 	passageNode->translate(pivotpoint.toOgreVector());
 	passageNode->setVisible(passageVisible);
 
+	/*
+	int round = 0;
+	headNodes = parentnode->createChildSceneNode();
+	for(std::vector<SourcePoint>::iterator it = p.points.begin(); it != p.points.end(); ++it) {
+		int cnt = 0;
+		for (std::vector<EndPoint>::iterator it2 = it->points.begin(); it2 != it->points.end(); ++it2) {
+			std::stringstream ss;
+			ss << "head" << round << "_id" << cnt; 
+			Ogre::Entity* ogreHead = mSceneMgr->createEntity(ss.str(), "ogrehead.mesh");
+			Ogre::SceneNode* headNode = headNodes->createChildSceneNode();
+			headNode->attachObject(ogreHead);
+			double v = 0.0004*cnt/2;
+			headNode->scale(v,v,v);
+			headNode->translate(Ogre::Vector3(it2->x, it2->y, it2->z));
+			cnt++;
+		}
+		round++;
+	}
+	headNodes->translate(pivotpoint.toOgreVector());
+	*/
+	
+	planesNode = parentnode->createChildSceneNode();
+		int id = 0;
+	int cnt = 0;
+	simplex::Plane myplane = hull.getPlane();
+		double* params = myplane.getParameters();
+		Ogre::Vector3 pn = myplane.normal.toOgreVector();
+		double ddist = myplane.distanceFromOrigo();
+		Ogre::Plane plane(pn , ddist);
+		
+//		Ogre::Plane plane(params[0],params[1], params[2], params[3]);
+		std::stringstream ss;
+		ss << "ground";
+		ss << id++;
+		std::stringstream ss2;
+		ss2 <<  "groundentinty" << id;
+		Ogre::String groundname;
+		ss >> groundname;
+		Ogre::String groundentname;
+		ss2 >> groundentname;
+		mSceneMgr->destroyEntity(groundentname);
+		Ogre::MeshManager::getSingleton().createPlane(groundname , Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,    plane, 2, 2, 10, 10, true, 1, 5, 5, myplane.getUpVector().toOgreVector());
+		Ogre::Entity* entGround = mSceneMgr->createEntity(groundentname , groundname);
+		SceneNode * node = planesNode->createChildSceneNode();
+		node->attachObject(entGround);
+		//node->translate(it->toOgreVector());
+		entGround->setMaterialName("Test2/ColourTest");
+		entGround->setCastShadows(false);
+		planesNode->translate(pivotpoint.toOgreVector());
+		planesNode->setVisible(planeVisible);
+
+		//parentnode->scale(13.0,13.0,13.0);
+
+/*
 	simplex::Plane* planes = util::Mesh::createBestFitPlanes(p);
 
 	planesNode = parentnode->createChildSceneNode();
@@ -311,7 +367,7 @@ void OgreScretch::regenerate(void) {
 
 	planesNode->translate(pivotpoint.toOgreVector());
 	planesNode->setVisible(planeVisible);
-
+*/
 
 }
 
@@ -489,6 +545,10 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 			}
 			
 		break;
+	case OIS::KC_Z:
+		headVisible = !headVisible;
+		headNodes->setVisible(headVisible);
+		break;
 	case OIS::KC_U:
 		planeVisible = ! planeVisible;
 		planesNode->setVisible(planeVisible);
@@ -510,7 +570,11 @@ bool OgreScretch::keyPressed( const OIS::KeyEvent &arg ){
 		shotNode->setVisible(shotVisible);
 		break;
 	case OIS::KC_R:
+		hullLimit++;
 		regenerate();
+		break;
+	case OIS::KC_T:
+		hullLimit = 0;
 		break;
 	case OIS::KC_L :
 		

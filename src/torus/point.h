@@ -14,6 +14,8 @@ namespace simplex {
 		Vector() {
 			x = 0; y = 0; z = 0;
 		}
+
+
 		Vector(double _x,double _y, double _z) {
 			x = _x;
 			y = _y;
@@ -78,6 +80,12 @@ namespace simplex {
 			return Ogre::Vector3(x, y, z);
 		}
 
+		std::string toString() {
+			std::stringstream ss;
+			ss << " x: " << this->x  << " y: " << this->y << " z: " << this->z;
+			return ss.str();
+		}
+
 	};
 
 
@@ -86,19 +94,32 @@ namespace simplex {
 	public:
 		Vector normal;
 		Vector point;
+		Vector up;
 
 
-		Plane() : normal(Vector(0,0,0)),point(Vector(0,0,0)) {}
+		Plane() : normal(Vector(0,0,0)),point(Vector(0,0,0)),up(Vector(0,0,0)) {}
 
 		Plane(double a, double b, double c, double d)  {
 			normal = Vector(a,b,c);
 			double t = -d / (a*a + b*b + c*c);
 			point = normal * t;
+			up = Vector(0,0,0);
 		}
 		
 		Plane(Vector &normal, Vector &point) {
 			this->normal = normal;
 			this->point = point;
+			up = Vector(0,0,0);
+		}
+
+		Plane(Vector &normal, Vector &point, Vector &up) {
+			this->normal = normal;
+			this->point = point;
+			this->up = up;
+		}
+		
+		Vector getUpVector() {
+			return up;
 		}
 
 		double* getParameters() {
