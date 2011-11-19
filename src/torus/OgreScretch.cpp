@@ -302,7 +302,7 @@ void OgreScretch::regenerate(void) {
 	headNodes->translate(pivotpoint.toOgreVector());
 	*/
 	
-	planesNode = parentnode->createChildSceneNode();
+/*	planesNode = parentnode->createChildSceneNode();
 		int id = 0;
 	int cnt = 0;
 	simplex::Plane myplane = hull.getPlane();
@@ -332,7 +332,8 @@ void OgreScretch::regenerate(void) {
 		planesNode->translate(pivotpoint.toOgreVector());
 		planesNode->setVisible(planeVisible);
 
-		//parentnode->scale(13.0,13.0,13.0);
+*/		//parentnode->scale(13.0,13.0,13.0);
+		parentnode->scale(10.0,10.0,10.0);
 
 /*
 	simplex::Plane* planes = util::Mesh::createBestFitPlanes(p);
@@ -366,8 +367,8 @@ void OgreScretch::regenerate(void) {
 	}
 
 	planesNode->translate(pivotpoint.toOgreVector());
-	planesNode->setVisible(planeVisible);
-*/
+	planesNode->setVisible(planeVisible);*/
+
 
 }
 

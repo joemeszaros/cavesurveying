@@ -32,9 +32,13 @@ public:
 		from = sourcefrom;
 		to = sourceto;
 
-		SourcePoint sourcepoints[2] = {sourcefrom, sourceto};
+		SourcePoint sourcepoints[2] = { sourcefrom, sourceto};
 
-		n = (to-from).normalize();
+		
+		for (int p=0;p<2;p++) {
+			pivotpoints[p] = util::Mesh::getPivotPoint(sourcepoints[p].points);
+		}
+		n = (pivotpoints[1]-pivotpoints[0]).normalize();
 		
 		//addtoManual2(from, from + n*0.4, Ogre::ColourValue(0,1.0,0));
 		//addtoManual2(Vector(0,0,0),  n, Ogre::ColourValue(0,1.0,0));
@@ -55,10 +59,6 @@ public:
 		}
 
 				
-	
-		
-			
-
 
 		//addtoManual2(from+n*0.4, from+n*0.4+ reference*0.6 ,Ogre::ColourValue(0,0,1.0));
 
@@ -94,8 +94,8 @@ public:
 
 			loopcounter = 0;
 			idistance = -1.0;	
-			Vector pivotpoint =  util::Mesh::getPivotPoint(sourcepoints[j].points);
-			pivotpoints[j] = pivotpoint;
+			Vector pivotpoint =  pivotpoints[j];
+			//pivotpoints[j] = pivotpoint;
 
 			
 
@@ -114,8 +114,8 @@ public:
 				i = util::Math::getPlaneSignum(pivotpoint, reference, circlepoint);
 				std::stringstream ss;
 				//ss<< "j : " << j << "signum : " << i << endl;
-				ss<< "current id :" << it->Id <<endl;
-				debug(ss.str().c_str());
+				//ss<< "current id :" << it->Id <<endl;
+				//debug(ss.str().c_str());
 
 				if (loopcounter != 0 && (previ * i != 1)) {
 					
@@ -145,8 +145,8 @@ public:
 				prevcirclepoint = circlepoint;
 				std::stringstream ss2;
 				//ss<< "j : " << j << "signum : " << i << endl;
-				ss2<< "prev point:" << prevcirclepoint.toString() <<endl;
-				debug(ss2.str().c_str());
+				//ss2<< "prev point:" << prevcirclepoint.toString() <<endl;
+				//debug(ss2.str().c_str());
 				loopcounter++;
 				subtract = 0;
 				round++;
