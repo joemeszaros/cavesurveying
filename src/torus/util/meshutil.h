@@ -11,6 +11,8 @@
 #include "../base.h"
 #include <hash_map>
 #include "../passage.h"
+#include "../complex.h"
+#include "../point.h"
 #include "mathutil.h"
 
 #ifndef MESHUTIL_H
@@ -32,6 +34,7 @@ namespace util
 		static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname,stdext::hash_map<const Ogre::String, Ogre::Vector3> vertexlist, std::vector<Index2Str> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype = Ogre::RenderOperation::OT_TRIANGLE_LIST);
 		static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype);
 		static Ogre::ManualObject* createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , Passage passage, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype, bool shot, bool slices);
+		static Ogre::ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr, Ogre::String name, Ogre::String materialname , complex::Worm worm);
 		static simplex::Vector getPivotPoint(Passage& p);
 		static Ogre::Vector3 getPivotPoint(stdext::hash_map<const Ogre::String, Ogre::Vector3> &vertexliststr);
 		static simplex::Vector getPivotPoint(std::vector<EndPoint> &basepoints);

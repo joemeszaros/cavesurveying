@@ -1,12 +1,22 @@
 #include <string>
 #include <OgreVector3.h>
-
+#include "point.h"
 #ifndef BASE_H
 #define BASE_H
  
 using namespace std;
 
-
+struct Index3Str {
+	string i1;
+	string i2;
+	string i3;
+	
+	Index3Str(string _i1,string _i2, string _i3) {
+		i1 = _i1;
+		i2 = _i2;
+		i1 = _i3;
+	}
+};
 
 struct Index2Str {
 	string i1;

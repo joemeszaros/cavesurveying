@@ -46,3 +46,4 @@ void exporters::Passage::export(string filename,vector<Ogre::Vector3> vertexlist
 	else cout << "Unable to open file";
   
 }
+

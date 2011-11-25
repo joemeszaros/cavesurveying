@@ -10,7 +10,7 @@ namespace simplex {
 		double x;  
 		double y;   
 		double z;
-		
+
 		Vector() {
 			x = 0; y = 0; z = 0;
 		}
@@ -45,8 +45,8 @@ namespace simplex {
 			y = y/per;
 			z = z/per;
 		}
-		
-		
+
+
 		Vector operator*(double per) {
 			return Vector(x*per,y*per,z*per);
 		}
@@ -105,7 +105,7 @@ namespace simplex {
 			point = normal * t;
 			up = Vector(0,0,0);
 		}
-		
+
 		Plane(Vector &normal, Vector &point) {
 			this->normal = normal;
 			this->point = point;
@@ -117,7 +117,7 @@ namespace simplex {
 			this->point = point;
 			this->up = up;
 		}
-		
+
 		Vector getUpVector() {
 			return up;
 		}
@@ -148,7 +148,7 @@ namespace simplex {
 			double z0 = w + c*t0;
 			return Vector(x0,y0,z0);
 		}
-		
+
 	};
 }
 

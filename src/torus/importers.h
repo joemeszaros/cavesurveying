@@ -9,6 +9,7 @@
 #include "base.h"
 #include <OgreMath.h>
 #include "passage.h"
+#include "complex.h"
 
 
 using namespace std;
@@ -52,6 +53,11 @@ namespace formats {
 	{
 		public:
 			static void export(string filename,std::vector<Ogre::Vector3> vertexlist,std::vector<Index2> indices, std::vector<CaveOffset> offsets);
+	};
+
+	class Ply {
+		public:
+			static void export(string filename, complex::Worm &worm);
 	};
 
 

@@ -14,6 +14,7 @@
 #include <OgreVector3.h>
 #include <OgreSubMesh.h>
 #include "hull.cpp"
+
 #include "ogre/movabletext.h"
 
 //-------------------------------------------------------------------------------------
@@ -238,6 +239,7 @@ void OgreScretch::regenerate(void) {
 	//formats::Polygon::import("G:\\cavesurveying\\data\\\Pocsakoi.cave",vertexliststr,indicesstr);
 	formats::Therion::import(filename,vertexliststr,indicesstr);
 	
+	
 	Passage p = formats::Therion::toPassage(vertexliststr, indicesstr);
 	//orderSourcePoints(p);
 
@@ -255,7 +257,9 @@ void OgreScretch::regenerate(void) {
 	Hull hull;
 	hull.limit = hullLimit;
 	ManualObject* manualHull = 0;
-	manualHull = hull.createHull(p, mSceneMgr,"hull","Cave/Brown");
+	complex::Worm worm = hull.createHull(p);
+	formats::Ply::export("d:/tmp/vv.ply", worm);
+	manualHull = util::Mesh::createManual(mSceneMgr,"hull","Cave/Brown",worm);
 	hullNode = parentnode->createChildSceneNode();
 
 	//MeshSerializer ser;

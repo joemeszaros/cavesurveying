@@ -430,3 +430,51 @@ void formats::Passage4::export(string filename,vector<Ogre::Vector3> vertexlist,
 	else cout << "Unable to open file";
   
 }
+
+void formats::Ply::export(string filename, complex::Worm &worm) {
+	ofstream myfile (filename.c_str());
+	if (myfile.is_open())
+	{
+		int vertexcnt = 0, facecnt = 0, loopcnt = 0;
+		
+		std::stringstream svertex, sface;
+
+		for (std::vector<complex::Ring>::iterator ring = worm.rings.begin(); ring != worm.rings.end(); ++ring) {
+			
+			loopcnt = 0;
+
+			for (std::vector<std::pair<graphics::Vertex, graphics::Vertex>>::iterator it = ring->segments.begin(); it != ring->segments.end(); ++it) {
+				
+				svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z << endl;
+				svertex << it->second.position.x << " " << it->second.position.y << " " << it->second.position.z << endl;
+				
+				if (loopcnt > 0) {
+					sface << "3 " << vertexcnt-2 << " " << (vertexcnt-1) << " " << (vertexcnt) << endl;
+					sface << "3 " << (vertexcnt-1) << " " << (vertexcnt) << " " << (vertexcnt+1) << endl;
+					facecnt += 2;
+				}
+
+				vertexcnt += 2;
+				loopcnt++;
+
+			}
+		}
+		
+		myfile << "ply" << endl;
+		myfile << "format ascii 1.0" << endl;
+		//myfile << "3d speleo view generated"<< endl;
+		myfile << "element vertex " <<  vertexcnt << endl;
+		myfile << "property float x" << endl;
+		myfile << "property float y" << endl;
+		myfile << "property float z" << endl;
+		myfile << "element face " << facecnt << endl;
+		myfile << "property list uchar int vertex_indices" << endl;
+		myfile << "end_header" << endl;
+		myfile << svertex.str();
+		myfile << sface.str();
+		
+	    myfile.close();
+	} 
+	else cout << "Unable to open file";
+  
+}

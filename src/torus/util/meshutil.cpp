@@ -141,6 +141,28 @@ ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::Strin
 	return manual;
 };
 
+
+ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname , complex::Worm worm) {
+
+	ManualObject* manual = mSceneMgr->createManualObject(name);
+	manual->setDynamic(true);
+	manual->begin(materialname, Ogre::RenderOperation::OperationType::OT_TRIANGLE_STRIP);
+	for(std::vector<complex::Ring>::iterator it = worm.rings.begin(); it != worm.rings.end(); ++it) {
+		for(std::vector<std::pair<graphics::Vertex, graphics::Vertex>>::iterator ringiterator = it->segments.begin(); ringiterator != it->segments.end(); ++ringiterator) {
+
+			manual->position(ringiterator->first.position.toOgreVector());
+			manual->normal(ringiterator->first.normal.toOgreVector());
+			manual->textureCoord(ringiterator->first.uv[0], ringiterator->first.uv[1]);
+			
+			manual->position(ringiterator->second.position.toOgreVector());
+			manual->normal(ringiterator->second.normal.toOgreVector());
+			manual->textureCoord(ringiterator->second.uv[0], ringiterator->second.uv[1]);
+		}
+	} 
+	manual->end();
+	return manual;
+};
+
 ManualObject* util::Mesh::createManual(Ogre::SceneManager* mSceneMgr,Ogre::String name,Ogre::String materialname ,std::vector<Ogre::Vector3> vertexlist, std::vector<Index2> indices, Ogre::ColourValue colour, Ogre::RenderOperation::OperationType optype) {
 
 	ManualObject* manual = mSceneMgr->createManualObject(name);
