@@ -456,18 +456,18 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 
 				vertexcnt += 2;
 				loopcnt++; */
-				svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z;
+				svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z << endl;
 				it->first.normal *= -1;
 				svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
 
-				svertex << it->second.position.x << " " << it->second.position.y << " " << it->second.position.z;
+				svertex << it->second.position.x << " " << it->second.position.y << " " << it->second.position.z << endl;
 				it->second.normal *= -1;
 				svertex << it->second.normal.x << " " << it->second.normal.y << " " << it->second.normal.z << endl;
 
 				simplex::Vector n = it->second.position - it->first.position;
 				for (double d = 0.1; d < 1; d+=0.1 ) {
 						simplex::Vector v_d = it->first.position+n * d;
-						svertex << v_d.x << " " << v_d.y << " " << v_d.z ;
+						svertex << v_d.x << " " << v_d.y << " " << v_d.z << endl;
 						svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
 
 						vertexcnt += 1;
@@ -484,7 +484,7 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 
 			}
 		}
-		/*
+		
 		myfile << "ply" << endl;
 		myfile << "format ascii 1.0" << endl;
 		//myfile << "3d speleo view generated"<< endl;
@@ -501,9 +501,7 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 		myfile << "end_header" << endl;
 		myfile << svertex.str();
 		//myfile << sface.str();
-		*/
-		myfile << svertex.str();
-	    myfile.close();
+		myfile.close();
 	} 
 	else cout << "Unable to open file";
   
