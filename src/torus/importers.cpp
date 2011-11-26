@@ -445,7 +445,7 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 
 			for (std::vector<std::pair<graphics::Vertex, graphics::Vertex>>::iterator it = ring->segments.begin(); it != ring->segments.end(); ++it) {
 				
-				/*svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z << endl;
+				svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z << endl;
 				svertex << it->second.position.x << " " << it->second.position.y << " " << it->second.position.z << endl;
 				
 				if (loopcnt > 0) {
@@ -455,33 +455,7 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 				}
 
 				vertexcnt += 2;
-				loopcnt++; */
-				svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z << endl;
-				it->first.normal *= -1;
-				svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
-
-				svertex << it->second.position.x << " " << it->second.position.y << " " << it->second.position.z << endl;
-				it->second.normal *= -1;
-				svertex << it->second.normal.x << " " << it->second.normal.y << " " << it->second.normal.z << endl;
-
-				simplex::Vector n = it->second.position - it->first.position;
-				for (double d = 0.1; d < 1; d+=0.1 ) {
-						simplex::Vector v_d = it->first.position+n * d;
-						svertex << v_d.x << " " << v_d.y << " " << v_d.z << endl;
-						svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
-
-						vertexcnt += 1;
-
-				}
-				/*simplex::Vector v_2_3 = it->first.position+n * 2/3;
-				svertex << v_1_3.x << " " << v_1_3.y << " " << v_1_3.z ;
-				svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
-				svertex << v_2_3.x << " " << v_2_3.y << " " << v_2_3.z;
-				svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;*/
-
-				vertexcnt += 2;
 				loopcnt++; 
-
 			}
 		}
 		
@@ -492,15 +466,11 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 		myfile << "property float x" << endl;
 		myfile << "property float y" << endl;
 		myfile << "property float z" << endl;
-		myfile << "property float nx" << endl;
-		myfile << "property float ny" << endl;
-		myfile << "property float nz" << endl;
-
 		myfile << "element face " << facecnt << endl;
 		myfile << "property list uchar int vertex_indices" << endl;
 		myfile << "end_header" << endl;
 		myfile << svertex.str();
-		//myfile << sface.str();
+		myfile << sface.str();
 		myfile.close();
 	} 
 	else cout << "Unable to open file";
