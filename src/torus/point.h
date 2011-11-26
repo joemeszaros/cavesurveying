@@ -46,6 +46,11 @@ namespace simplex {
 			z = z/per;
 		}
 
+		void operator*=(double m) {
+			x = x*m;
+			y = y*m;
+			z = z*m;
+		}
 
 		Vector operator*(double per) {
 			return Vector(x*per,y*per,z*per);
