@@ -436,7 +436,10 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 	if (myfile.is_open())
 	{
 		int vertexcnt = 0, facecnt = 0, loopcnt = 0;
-		
+		bool normal = true;
+		bool minus = true;
+		bool dense = true;
+		bool face = false;
 		std::stringstream svertex, sface;
 
 		for (std::vector<complex::Ring>::iterator ring = worm.rings.begin(); ring != worm.rings.end(); ++ring) {
@@ -446,14 +449,43 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 			for (std::vector<std::pair<graphics::Vertex, graphics::Vertex>>::iterator it = ring->segments.begin(); it != ring->segments.end(); ++it) {
 				
 				svertex << it->first.position.x << " " << it->first.position.y << " " << it->first.position.z << endl;
+				
+				if (minus) {
+						it->second.normal *= -1;
+						it->first.normal *= -1;
+				}
+
+				if (normal) {
+					svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
+				}
+				
 				svertex << it->second.position.x << " " << it->second.position.y << " " << it->second.position.z << endl;
 				
-				if (loopcnt > 0) {
+				if (normal) {
+					svertex << it->second.normal.x << " " << it->second.normal.y << " " << it->second.normal.z << endl;
+				}
+				
+				if (dense) {
+					simplex::Vector n = it->second.position - it->first.position;
+					for (double d = 0.1; d < 1; d+=0.1 ) {
+						simplex::Vector v_d = it->first.position+n * d;
+						svertex << v_d.x << " " << v_d.y << " " << v_d.z << endl;
+						
+						if (normal) {
+							svertex << it->first.normal.x << " " << it->first.normal.y << " " << it->first.normal.z << endl;
+						}
+
+						vertexcnt += 1;
+
+					}
+				}
+
+				if (face && loopcnt > 0) {
 					sface << "3 " << vertexcnt-2 << " " << (vertexcnt-1) << " " << (vertexcnt) << endl;
 					sface << "3 " << (vertexcnt-1) << " " << (vertexcnt) << " " << (vertexcnt+1) << endl;
 					facecnt += 2;
 				}
-
+				
 				vertexcnt += 2;
 				loopcnt++; 
 			}
@@ -466,11 +498,18 @@ void formats::Ply::export(string filename, complex::Worm &worm) {
 		myfile << "property float x" << endl;
 		myfile << "property float y" << endl;
 		myfile << "property float z" << endl;
+		if (normal) {
+			myfile << "property float nx" << endl;
+			myfile << "property float ny" << endl;
+			myfile << "property float nz" << endl;
+		}
 		myfile << "element face " << facecnt << endl;
 		myfile << "property list uchar int vertex_indices" << endl;
 		myfile << "end_header" << endl;
 		myfile << svertex.str();
-		myfile << sface.str();
+		if (face) {
+			myfile << sface.str();
+		}
 		myfile.close();
 	} 
 	else cout << "Unable to open file";
