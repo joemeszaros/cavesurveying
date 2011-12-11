@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, ToroidActivity!</string>
+    <string name="app_name">Toroid</string>
+    <string name="hide_me">Hide me</string>
+    <string name="visibility_1_vis">visibility_1_vis</string>
+    <string name="visibility_1_invis">visibility_1_invis</string>
+	<string name="visibility_1_gone">visibility_1_gone</string>
+        
+</resources>
