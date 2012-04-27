@@ -5,22 +5,14 @@ import ImageEnhance
 import ImageFilter
 import ImageFont, ImageDraw
 import rgb_to_lab
-
+from colormath.color_objects import RGBColor, LabColor
 arr={ 0 : 0, 1 : 0}
-
-
-def novel(x) : 
-	print "novel called with " + str(x)
-	global cnt
-	cnt=cnt+1
-	return 128
-
 
 def colorswap(pixel, x, y, w, h, pixels):
     """Shifts the channels of the image."""
-    
+    #lab = 71.0122 -4.94858 43.8426
     #if (abs(pixel[0] - 132) < 120 and abs(pixel[1] - 1) < 50 and abs(pixel[2] -0) < 50) :
-    if (rgb_to_lab.colour_difference(pixel[0], pixel[1], pixel[2], 132, 0 , 0) < 70) :
+    if (rgb_to_lab.colour_difference(pixel[0], pixel[1], pixel[2], LabColor(lab_l=71.0122, lab_a=-4.94858, lab_b=43.8426)) < 10) :
         #print rgb_to_lab.colour_difference(pixel[0], pixel[1], pixel[2], 132, 0 , 0) 
         return (255,255,255) #pixel
     else :
@@ -122,7 +114,7 @@ frame = im.crop(((600, 600, 1000, 1000)))
 #blur.show()
 #orig=frame.copy()
 #orig.show()
-frame = ImageEnhance.Contrast(frame).enhance(10)
+#--frame = ImageEnhance.Contrast(frame).enhance(10)
 
 #enha=ImageEnhance.Contrast(blur).enhance(10)
 #enha.show()
@@ -131,6 +123,8 @@ modified=frame.copy()
 #enmo=enha.copy()
 applyfilter(modified, colorswap)
 modified.show()
+mod2 = ImageEnhance.Contrast(modified).enhance(10)
+mod2.show()
 #-applyfilter(modified, removenoise)
 
 #-draw = ImageDraw.Draw(modified)
